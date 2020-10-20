@@ -5,7 +5,7 @@ import * as ImageminPlugin from 'imagemin-webpack-plugin';
 
 module.exports = {
 	context: Path.join( __dirname, '../src' ),
-	entry: [ './js/main.ts' ],
+	entry: [ './main.ts' ],
 	module: {
 		rules: [
 			{

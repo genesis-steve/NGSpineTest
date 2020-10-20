@@ -2,7 +2,7 @@
 	"name": "ngspinetest",
 	"version": "1.0.0",
 	"description": "NGSpineTest",
-	"main": "src/js/main.js",
+	"main": "src/main.ts",
 	"scripts": {
 		"start": "webpack-dev-server --open --config ./config/webpack.dev.ts"
 	},
