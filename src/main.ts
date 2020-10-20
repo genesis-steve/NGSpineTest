@@ -1,61 +1,45 @@
-import * as PIXI from 'pixi.js';
+import { Application, DisplayObject, spine } from 'pixi.js';
+import 'pixi-spine';
+import { ISpineConfig, SpineConfig } from 'src/config/SpineConfig';
+import { IMainConfig, MainConfig } from 'src/config/MainConfig';
 
 window.onload = () => {
 	document.title = 'Spine Test';
-	new Application();
+	new GmaeApplication();
 };
 
-export class Application {
+export class GmaeApplication {
 
-	protected config: IAppConfig;
+	protected appConfig: IMainConfig;
+	protected spineConfig: ISpineConfig;
 
-	protected pixi: PIXI.Application;
+	protected pixi: Application;
+	protected animation: spine.Spine;
 
 	constructor () {
-		this.config = this.getAppConfig();
-		this.pixi = new PIXI.Application( this.config );
-		this.createElements();
-		window.onresize = this.onResize.bind( this );
-	}
+		this.appConfig = new MainConfig();
+		this.pixi = new Application( this.appConfig );
 
-	protected getAppConfig (): IAppConfig {
-		return {
-			width: 720,
-			height: 1280,
-			backgroundColor: 0x1099bb,
-			view: document.querySelector( '#scene' )
-		};
+		this.createElements();
 	}
 
 	protected createElements (): void {
-		const texture = PIXI.Texture.from( 'assets/bunny.png' );
-		const bunny = new PIXI.Sprite( texture );
-		bunny.anchor.set( 0.5 );
-		bunny.x = 160;
-		bunny.y = 160;
-		this.pixi.stage.addChild( bunny );
-		this.pixi.ticker.add( ( delta: number ) => {
-			bunny.rotation -= 0.01 * delta;
-		} );
-		this.pixi.renderer.resize( this.config.width, this.config.height );
+		this.setupAnimation();
 	}
 
-	protected onResize (): void {
-		// window.innerWidth,  window.innerHeight
-		const scale = document.documentElement.clientHeight / this.config.height;
-		const canvas: HTMLCanvasElement = this.pixi.renderer.view;
-		const gameRatio = this.config.width / this.config.height
-		console.error( document.documentElement.clientHeight, document.documentElement.clientWidth );
-		canvas.style.height = `${ document.documentElement.clientHeight } px`;
-		canvas.style.width = `${ document.documentElement.clientHeight * gameRatio } px`;
+	protected setupAnimation (): void {
+		this.spineConfig = new SpineConfig();
+		PIXI.loader.add( 'LightningTallyMeter', 'assets/LightningTallyMeter.json' )
+			.load( ( loader, res ) => {
+				this.animation = new spine.Spine( res.LightningTallyMeter.spineData );
+				this.addChild( this.animation );
+				this.animation.state.setAnimation( 0, 'TallyMeter_03_Appear', false );
+			} );
 	}
 
-}
+	public addChild ( displayObj: DisplayObject ): void {
+		this.pixi.stage.addChild( displayObj );
+	}
 
-export interface IAppConfig {
-	width: number;
-	height: number;
-	backgroundColor: number;
-	view: any;
 }
 

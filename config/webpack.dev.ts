@@ -11,7 +11,7 @@ module.exports = Merge( Common, {
 
 		port: 8018,
 
-		host: '0.0.0.0',
+		host: '127.0.0.1',
 
 		hot: true
 	}

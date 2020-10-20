@@ -3,6 +3,8 @@ import * as HtmlPlugin from 'html-webpack-plugin';
 import * as CopyWebpackPlugin from 'copy-webpack-plugin';
 import * as ImageminPlugin from 'imagemin-webpack-plugin';
 
+const appDir = Path.dirname( __dirname );
+
 module.exports = {
 	context: Path.join( __dirname, '../src' ),
 	entry: [ './main.ts' ],
@@ -13,10 +15,22 @@ module.exports = {
 				use: 'ts-loader',
 				exclude: /node_modules/,
 			},
-		],
+			{
+				test: /pixi\.js$/,
+				use: 'expose-loader?PIXI'
+			},
+		]
 	},
 	resolve: {
-		extensions: [ '.tsx', '.ts', '.js' ],
+		extensions: [ '.ts', '.tsx', '.js', '.css', '.scss' ],
+		modules: [
+			Path.resolve( appDir, 'src' ),
+			Path.resolve( appDir, 'node_modules' )
+		],
+		alias: {
+			'pixi': Path.resolve( appDir, 'node_modules/pixi.js/dist/pixi.js' ),
+			'src': Path.resolve( appDir, 'src/' )
+		}
 	},
 	output: {
 		filename: 'bundle.js',
