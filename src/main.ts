@@ -19,8 +19,11 @@ export class GmaeApplication {
 	constructor () {
 		this.appConfig = new MainConfig();
 		this.pixi = new Application( this.appConfig );
-
 		this.createElements();
+	}
+
+	public addChild ( displayObj: DisplayObject ): void {
+		this.pixi.stage.addChild( displayObj );
 	}
 
 	protected createElements (): void {
@@ -29,17 +32,40 @@ export class GmaeApplication {
 
 	protected setupAnimation (): void {
 		this.spineConfig = new SpineConfig();
-		PIXI.loader.add( 'LightningTallyMeter', 'assets/LightningTallyMeter.json' )
+		PIXI.loader.add( this.spineConfig.assetName, `assets/${ this.spineConfig.assetName }.json` )
 			.load( ( loader, res ) => {
-				this.animation = new spine.Spine( res.LightningTallyMeter.spineData );
+				this.animation = new spine.Spine( res[ this.spineConfig.assetName ].spineData );
+				this.animation.renderable = false;
 				this.addChild( this.animation );
-				this.animation.state.setAnimation( 0, 'TallyMeter_03_Appear', false );
+				this.createTestButtons();
 			} );
 	}
 
-	public addChild ( displayObj: DisplayObject ): void {
-		this.pixi.stage.addChild( displayObj );
+	protected createTestButtons (): void {
+		const buttonContainer = document.getElementById( 'buttonContainer' );
+		buttonContainer.style.position = 'absolute';
+		buttonContainer.style.top = '10px';
+		buttonContainer.style.left = '730px';
+
+
+		let animationList: string[] = [];
+
+		this.animation.spineData.animations.forEach( animation => {
+			const button: string = '<button id = ' + animation.name + '>' + animation.name + '</button>';
+			animationList.push( animation.name );;
+			buttonContainer.innerHTML += button;
+		} );
+
+		animationList.forEach( e => {
+			document.getElementById( e ).onclick = function () {
+				window.postMessage( { name: e }, '*' );
+			};
+		} );
+
+		window.addEventListener( "message", ( event ) => {
+			this.animation.renderable = true;
+			this.animation.state.setAnimation( 0, event.data.name, false );
+		}, false );
 	}
 
 }
-
