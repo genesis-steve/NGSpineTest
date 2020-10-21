@@ -46,25 +46,27 @@ export class GmaeApplication {
 		buttonContainer.style.position = 'absolute';
 		buttonContainer.style.top = '10px';
 		buttonContainer.style.left = '730px';
-
+		buttonContainer.style.height = '1280px';
+		buttonContainer.style.overflow = 'auto';
 
 		let animationList: string[] = [];
 
 		this.animation.spineData.animations.forEach( animation => {
-			const button: string = '<button id = ' + animation.name + '>' + animation.name + '</button>';
+			const buttonHTML: string = '<button id = ' + animation.name + '>' + animation.name + '</button><br>';
+			buttonContainer.innerHTML += buttonHTML;
 			animationList.push( animation.name );;
-			buttonContainer.innerHTML += button;
 		} );
 
 		animationList.forEach( e => {
-			document.getElementById( e ).onclick = function () {
-				window.postMessage( { name: e }, '*' );
+			document.getElementById( e ).style.fontSize = '30px';
+			document.getElementById( e ).onclick = () => {
+				window.postMessage( { animationName: e }, '*' );
 			};
 		} );
 
 		window.addEventListener( "message", ( event ) => {
 			this.animation.renderable = true;
-			this.animation.state.setAnimation( 0, event.data.name, false );
+			this.animation.state.setAnimation( 0, event.data.animationName, false );
 		}, false );
 	}
 
