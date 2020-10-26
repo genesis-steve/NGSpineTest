@@ -7,7 +7,7 @@ export class SpineConfig implements ISpineConfig {
 		overflow: 'auto',
 		x: 730,
 		y: 10,
-		width: 600,
+		width: 720,
 		height: 1280,
 		fontSize: 30
 	};
