@@ -1,7 +1,7 @@
 import { TSMap } from 'typescript-map';
-import { Application, DisplayObject, spine } from 'pixi.js';
+import { Application, spine } from 'pixi.js';
 import 'pixi-spine';
-import { ISpineConfig, SpineConfig } from 'src/config/SpineConfig';
+import { ISpineConfig, IStyle, SpineConfig } from 'src/config/SpineConfig';
 import { IMainConfig, MainConfig } from 'src/config/MainConfig';
 
 window.onload = () => {
@@ -18,7 +18,9 @@ export class GmaeApplication {
 
 	protected mixGroup: TSMap<string, IMixGroup>;
 
-	protected animationMixer: HTMLElement;
+	protected animationMixer: HTMLDivElement;
+
+	protected addButton: HTMLButtonElement;
 
 	protected waitInputData: IWaitInputData = {
 		isWaiting: false,
@@ -33,10 +35,6 @@ export class GmaeApplication {
 		this.createElements();
 	}
 
-	public addChild ( displayObj: DisplayObject ): void {
-		this.pixi.stage.addChild( displayObj );
-	}
-
 	protected createElements (): void {
 		this.setupAnimation();
 	}
@@ -47,7 +45,7 @@ export class GmaeApplication {
 			.load( ( loader, res ) => {
 				this.animation = new spine.Spine( res[ this.spineConfig.assetName ].spineData );
 				this.animation.renderable = false;
-				this.addChild( this.animation );
+				this.pixi.stage.addChild( this.animation );
 				this.createTestButtons();
 				this.createAnimationMixer();
 				this.addEventListener();
@@ -55,23 +53,15 @@ export class GmaeApplication {
 	}
 
 	protected createTestButtons (): void {
-		const buttonContainer = document.getElementById( 'displayButtonContainer' );
-		const config = this.spineConfig.displayButtonContainer;
-		buttonContainer.style.position = config.position;
-		buttonContainer.style.overflow = config.overflow;
-		buttonContainer.style.top = config.y.toString();
-		buttonContainer.style.left = config.x.toString();
-		buttonContainer.style.width = config.width.toString();
-		buttonContainer.style.height = config.height.toString();
-
-		const buttonIdSuffix: string = '_DisplayBtn';
+		const buttonContainer = this.createHtmlElement<HTMLDivElement>( 'div', this.spineConfig.displayButtonContainer );
+		document.getElementById( 'mainContainer' ).appendChild( buttonContainer );
 
 		this.animation.spineData.animations.forEach( animation => {
-			const buttonId: string = animation.name + buttonIdSuffix;
-			const button: HTMLButtonElement = document.createElement( 'button' );
-			button.id = buttonId;
+
+			const config = this.spineConfig.animationButton;
+			const button = this.createHtmlElement<HTMLButtonElement>( 'button', config );
+			button.id = animation.name + '_Btn';
 			button.textContent = animation.name;
-			button.style.fontSize = `${ config.fontSize }px`;
 			button.onclick = () => {
 				if ( this.waitInputData.isWaiting ) {
 					window.postMessage( {
@@ -95,22 +85,27 @@ export class GmaeApplication {
 	}
 
 	protected createAnimationMixer (): void {
-		const config = this.spineConfig.animationMixer;
-		this.animationMixer = document.getElementById( 'animationMixer' );
-		this.animationMixer.style.position = config.position;
-		this.animationMixer.style.overflow = config.overflow;
-		this.animationMixer.style.top = config.y.toString();
-		this.animationMixer.style.left = config.x.toString();
-		this.animationMixer.style.width = config.width.toString();
-		this.animationMixer.style.height = config.height.toString();
+		this.animationMixer = this.createHtmlElement<HTMLDivElement>( 'div', this.spineConfig.animationMixer );
+		document.getElementById( 'mainContainer' ).appendChild( this.animationMixer );
 
 		this.mixGroup = new TSMap();
-		this.addMixGroup();
+		this.createAddMixGroupButton();
+		this.createMixGroup();
 	}
 
-	protected addMixGroup (): void {
-		const group: HTMLDivElement = document.createElement( 'div' );
-		group.id = 'MixGroup_' + this.mixGroup.size;
+	protected createAddMixGroupButton (): void {
+		this.addButton = this.createHtmlElement<HTMLButtonElement>( 'button', this.spineConfig.addButton );
+		this.addButton.onclick = () => {
+			this.createMixGroup();
+		}
+		this.animationMixer.appendChild( this.addButton );
+	}
+
+	protected createMixGroup (): void {
+		this.animationMixer.removeChild( this.addButton );
+		const config = this.spineConfig.mixGroup;
+		const group: HTMLDivElement = this.createHtmlElement<HTMLDivElement>( 'div', config );
+		group.id = config.id + this.mixGroup.size();
 		this.mixGroup.set( group.id, {
 			firstAnimation: undefined,
 			lastAnimation: undefined,
@@ -121,18 +116,17 @@ export class GmaeApplication {
 		this.createLastInputButton( group );
 		this.createMixinTimeInput( group );
 		this.createPlayInput( group );
+		this.animationMixer.appendChild( this.addButton );
 	}
 
 	protected createFirstInputButton ( group: HTMLDivElement ): void {
-		const config = this.spineConfig.animationMixer;
+		const config = this.spineConfig.firstAnimationButton;
 
-		const btnPrefix: string = 'First_';
-		const buttonId: string = btnPrefix + ( this.mixGroup.size() - 1 );
+		const label: HTMLLabelElement = this.createHtmlElement<HTMLLabelElement>( 'label', config.label );
+		group.appendChild( label );
 
-		const button: HTMLButtonElement = document.createElement( 'button' );
-		button.id = buttonId;
-		button.textContent = 'Get';
-		button.style.fontSize = config.fontSize.toString();
+		const button: HTMLButtonElement = this.createHtmlElement<HTMLButtonElement>( 'button', config.button );
+		button.id = config.button.id + ( this.mixGroup.size() - 1 );
 		group.appendChild( button );
 		group.appendChild( document.createElement( 'br' ) );
 
@@ -140,22 +134,20 @@ export class GmaeApplication {
 			if ( !this.waitInputData.isWaiting ) {
 				button.textContent = 'Waiting...';
 				this.waitInputData.isWaiting = true;
-				this.waitInputData.targetId = buttonId;
+				this.waitInputData.targetId = button.id;
 				this.waitInputData.groupId = group.id;
 			}
 		};
 	}
 
 	protected createLastInputButton ( group: HTMLDivElement ): void {
-		const config = this.spineConfig.animationMixer;
+		const config = this.spineConfig.lastAnimationButton;
 
-		const btnPrefix: string = 'Last_';
-		const buttonId: string = btnPrefix + ( this.mixGroup.size() - 1 );
+		const label: HTMLLabelElement = this.createHtmlElement<HTMLLabelElement>( 'label', config.label );
+		group.appendChild( label );
 
-		const button: HTMLButtonElement = document.createElement( 'button' );
-		button.id = buttonId;
-		button.textContent = 'Get';
-		button.style.fontSize = config.fontSize.toString();
+		const button: HTMLButtonElement = this.createHtmlElement<HTMLButtonElement>( 'button', config.button );
+		button.id = config.button.id + ( this.mixGroup.size() - 1 );
 		group.appendChild( button );
 		group.appendChild( document.createElement( 'br' ) );
 
@@ -163,30 +155,30 @@ export class GmaeApplication {
 			if ( !this.waitInputData.isWaiting ) {
 				button.textContent = 'Waiting...';
 				this.waitInputData.isWaiting = true;
-				this.waitInputData.targetId = buttonId;
+				this.waitInputData.targetId = button.id;
 				this.waitInputData.groupId = group.id;
 			}
 		};
 	}
 
 	protected createMixinTimeInput ( group: HTMLDivElement ): void {
-		const input: HTMLInputElement = document.createElement( 'input' );
-		const config = this.spineConfig.animationMixer;
-		input.id = 'Input_' + ( this.mixGroup.size() - 1 );
-		input.type = 'text';
-		input.style.fontSize = config.fontSize.toString();
-		input.style.width = '100';
+		const config = this.spineConfig.mixin;
+
+		const label: HTMLLabelElement = this.createHtmlElement<HTMLLabelElement>( 'label', config.label );
+		label.id = config.label.id + ( this.mixGroup.size() - 1 );
+		group.appendChild( label );
+
+		const input: HTMLInputElement = this.createHtmlElement<HTMLInputElement>( 'input', config.input );
+		input.id = config.input.id + ( this.mixGroup.size() - 1 );
 		group.appendChild( input );
 		group.appendChild( document.createElement( 'br' ) );
 	}
 
 	protected createPlayInput ( group: HTMLDivElement ): void {
-		const button: HTMLButtonElement = document.createElement( 'button' );
-		const config = this.spineConfig.animationMixer;
+		const config = this.spineConfig.playButton;
+		const button: HTMLButtonElement = this.createHtmlElement<HTMLButtonElement>( 'button', config );
 		const idNum = this.mixGroup.size() - 1;
-		button.id = 'Play_' + idNum;
-		button.textContent = 'Play';
-		button.style.fontSize = config.fontSize.toString();
+		button.id = config.id + idNum;
 		button.onclick = () => {
 			const mixConfig = this.mixGroup.get( group.id );
 			mixConfig.mixinTime = +( document.getElementById( 'Input_' + idNum ) as HTMLInputElement ).value;
@@ -208,19 +200,55 @@ export class GmaeApplication {
 					this.animation.state.setAnimation( 0, eventData.data.animationName, false );
 				} else if ( eventData.type == EventType.SET_ANIMATION_MIX ) {
 					document.getElementById( this.waitInputData.targetId ).textContent = eventData.data.animationName;
-					if ( this.waitInputData.targetId.includes( 'First_' ) ) {
+					if ( this.waitInputData.targetId.includes( this.spineConfig.firstAnimationButton.button.id ) ) {
 						this.mixGroup.get( this.waitInputData.groupId ).firstAnimation = eventData.data.animationName;
-					} else if ( this.waitInputData.targetId.includes( 'Last_' ) ) {
+					} else if ( this.waitInputData.targetId.includes( this.spineConfig.lastAnimationButton.button.id ) ) {
 						this.mixGroup.get( this.waitInputData.groupId ).lastAnimation = eventData.data.animationName;
 					}
 					this.waitInputData.targetId = undefined;
 					this.waitInputData.groupId = undefined;
 					this.waitInputData.isWaiting = false;
-				} else if ( eventData.type == EventType.PLAY_MIXED_ANIMATION ) {
-					this.addMixGroup();
 				}
 			}
 		}, false );
+	}
+
+	protected createHtmlElement<T extends HTMLElement> ( type: string, config: IStyle ): T {
+		const element = <T> document.createElement( type );
+		if ( config.id ) {
+			element.id = config.id;
+		}
+		if ( config.textContent ) {
+			element.textContent = config.textContent;
+		}
+		if ( config.value ) {
+			( element as any ).value = config.value;
+		}
+		if ( config.position ) {
+			element.style.position = config.position;
+		}
+		if ( config.overflow ) {
+			element.style.overflow = config.overflow;
+		}
+		if ( config.x ) {
+			element.style.left = config.x.toString();
+		}
+		if ( config.y ) {
+			element.style.top = config.y.toString();
+		}
+		if ( config.width ) {
+			element.style.width = config.width.toString();
+		}
+		if ( config.height ) {
+			element.style.height = config.height.toString();
+		}
+		if ( config.fontSize ) {
+			element.style.fontSize = config.fontSize.toString();
+		}
+		if ( config.margin ) {
+			element.style.margin = config.margin;
+		}
+		return element;
 	}
 
 }
