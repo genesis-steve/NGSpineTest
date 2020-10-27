@@ -18,6 +18,8 @@ export class GmaeApplication {
 
 	protected mixGroup: TSMap<string, IMixGroup>;
 
+	protected mainContainer: HTMLDivElement;
+	protected buttonContainer: HTMLDivElement;
 	protected animationMixer: HTMLDivElement;
 
 	protected addButton: HTMLButtonElement;
@@ -36,6 +38,7 @@ export class GmaeApplication {
 	}
 
 	protected createElements (): void {
+		this.mainContainer = <HTMLDivElement> document.getElementById( 'mainContainer' );
 		this.setupAnimation();
 	}
 
@@ -53,8 +56,8 @@ export class GmaeApplication {
 	}
 
 	protected createTestButtons (): void {
-		const buttonContainer = this.createHtmlElement<HTMLDivElement>( 'div', this.spineConfig.displayButtonContainer );
-		document.getElementById( 'mainContainer' ).appendChild( buttonContainer );
+		this.buttonContainer = this.createHtmlElement<HTMLDivElement>( 'div', this.spineConfig.displayButtonContainer );
+		this.mainContainer.appendChild( this.buttonContainer );
 
 		this.animation.spineData.animations.forEach( animation => {
 
@@ -79,14 +82,14 @@ export class GmaeApplication {
 					}, '*' );
 				}
 			};
-			buttonContainer.appendChild( button );
-			buttonContainer.appendChild( document.createElement( 'br' ) );
+			this.buttonContainer.appendChild( button );
+			this.buttonContainer.appendChild( document.createElement( 'br' ) );
 		} );
 	}
 
 	protected createAnimationMixer (): void {
 		this.animationMixer = this.createHtmlElement<HTMLDivElement>( 'div', this.spineConfig.animationMixer );
-		document.getElementById( 'mainContainer' ).appendChild( this.animationMixer );
+		this.mainContainer.appendChild( this.animationMixer );
 
 		this.mixGroup = new TSMap();
 		this.createAddMixGroupButton();
