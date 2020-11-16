@@ -184,7 +184,7 @@ export class GmaeApplication {
 		button.id = config.id + idNum;
 		button.onclick = () => {
 			const mixConfig = this.mixGroup.get( group.id );
-			mixConfig.mixinTime = +( document.getElementById( 'Input_' + idNum ) as HTMLInputElement ).value;
+			mixConfig.mixinTime = +( document.getElementById( 'Input_' + idNum ) as HTMLInputElement ).value / 1000;
 			this.animation.stateData.setMix( mixConfig.firstAnimation, mixConfig.lastAnimation, mixConfig.mixinTime );
 			this.animation.renderable = true;
 			this.animation.state.setAnimation( 0, mixConfig.firstAnimation, false );

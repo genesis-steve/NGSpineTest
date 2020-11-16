@@ -4,26 +4,26 @@ export class SpineConfig implements ISpineConfig {
 
 	public displayButtonContainer: IStyle = {
 		id: 'displayButtonContainer',
-		position: 'absolute',
+		position: 'relative',
 		overflow: 'auto',
-		x: 730,
-		y: 10,
+		x: 720,
+		y: -1280,
 		width: 720,
 		height: 1280,
 		fontSize: 30,
-		margin: '10 0'
+		margin: '0 10'
 	};
 
 	public animationMixer: IStyle = {
 		id: 'animationMixer',
-		position: 'absolute',
+		position: 'relative',
 		overflow: 'auto',
 		x: this.displayButtonContainer.x + this.displayButtonContainer.width,
-		y: 10,
+		y: -1280 - this.displayButtonContainer.height,
 		width: 900,
 		height: 1280,
 		fontSize: 30,
-		margin: '10 0'
+		margin: '0 20'
 	};
 
 	public animationButton: IStyle = {
@@ -68,7 +68,7 @@ export class SpineConfig implements ISpineConfig {
 	public mixin: IMixin = {
 		label: {
 			id: 'MixinLabel_',
-			textContent: 'Set Mix Time : ',
+			textContent: 'Set Mix Time (ms) : ',
 			fontSize: 30,
 			margin: '10 0'
 		},
