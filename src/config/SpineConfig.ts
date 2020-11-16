@@ -35,6 +35,17 @@ export class SpineConfig implements ISpineConfig {
 		id: 'MixGroup_'
 	};
 
+	public track: IStyle = {
+		id: 'TrackGroup_',
+		margin: '20 0'
+	};
+
+	public trackLabel: IStyle = {
+		id: 'TrackLabel_',
+		textContent: 'Track ',
+		backgroundColor: '#A2E9FF'
+	};
+
 	public firstAnimationButton: IInputAnimationButton = {
 		label: {
 			id: 'FirstAnimLabel_',
@@ -104,6 +115,8 @@ export interface ISpineConfig {
 	animationMixer: IStyle;
 	animationButton: IStyle;
 	mixGroup: IStyle;
+	track: IStyle;
+	trackLabel: IStyle;
 	firstAnimationButton: IInputAnimationButton;
 	lastAnimationButton: IInputAnimationButton;
 	mixin: {
@@ -132,6 +145,7 @@ export interface IStyle {
 	fontSize?: number;
 	margin?: string;
 	type?: string;
+	backgroundColor?: string;
 }
 
 export interface IInputAnimationButton {

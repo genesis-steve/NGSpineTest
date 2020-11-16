@@ -16,7 +16,7 @@ export class GmaeApplication {
 	protected pixi: Application;
 	protected animation: spine.Spine;
 
-	protected mixGroup: TSMap<string, IMixGroup>;
+	protected mixGroup: TSMap<string, Array<ITrackGroup>>;
 
 	protected mainContainer: HTMLDivElement;
 	protected buttonContainer: HTMLDivElement;
@@ -27,7 +27,8 @@ export class GmaeApplication {
 	protected waitInputData: IWaitInputData = {
 		isWaiting: false,
 		targetId: undefined,
-		groupId: undefined
+		groupId: undefined,
+		trackIndex: undefined
 	};
 
 	constructor () {
@@ -56,13 +57,13 @@ export class GmaeApplication {
 	}
 
 	protected createTestButtons (): void {
-		this.buttonContainer = this.createHtmlElement<HTMLDivElement>( 'div', this.spineConfig.displayButtonContainer );
+		this.buttonContainer = this.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, this.spineConfig.displayButtonContainer );
 		this.mainContainer.appendChild( this.buttonContainer );
 
 		this.animation.spineData.animations.forEach( animation => {
 
 			const config = this.spineConfig.animationButton;
-			const button = this.createHtmlElement<HTMLButtonElement>( 'button', config );
+			const button = this.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config );
 			button.id = animation.name + '_Btn';
 			button.textContent = animation.name;
 			button.onclick = () => {
@@ -83,12 +84,12 @@ export class GmaeApplication {
 				}
 			};
 			this.buttonContainer.appendChild( button );
-			this.buttonContainer.appendChild( document.createElement( 'br' ) );
+			this.buttonContainer.appendChild( document.createElement( HTMLElementType.BR ) );
 		} );
 	}
 
 	protected createAnimationMixer (): void {
-		this.animationMixer = this.createHtmlElement<HTMLDivElement>( 'div', this.spineConfig.animationMixer );
+		this.animationMixer = this.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, this.spineConfig.animationMixer );
 		this.mainContainer.appendChild( this.animationMixer );
 
 		this.mixGroup = new TSMap();
@@ -97,7 +98,7 @@ export class GmaeApplication {
 	}
 
 	protected createAddMixGroupButton (): void {
-		this.addButton = this.createHtmlElement<HTMLButtonElement>( 'button', this.spineConfig.addButton );
+		this.addButton = this.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, this.spineConfig.addButton );
 		this.addButton.onclick = () => {
 			this.createMixGroup();
 		}
@@ -107,111 +108,138 @@ export class GmaeApplication {
 	protected createMixGroup (): void {
 		this.animationMixer.removeChild( this.addButton );
 		const config = this.spineConfig.mixGroup;
-		const group: HTMLDivElement = this.createHtmlElement<HTMLDivElement>( 'div', config );
+		const group: HTMLDivElement = this.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config );
 		group.id = config.id + this.mixGroup.size();
-		this.mixGroup.set( group.id, {
-			firstAnimation: undefined,
-			lastAnimation: undefined,
-			mixinTime: 0
-		} );
+		this.mixGroup.set( group.id, [] );
 		this.animationMixer.appendChild( group );
-		this.createFirstInputButton( group );
-		this.createLastInputButton( group );
-		this.createMixinTimeInput( group );
+		this.createTracks( group, 2 );
 		this.createPlayInput( group );
 		this.animationMixer.appendChild( this.addButton );
 	}
 
-	protected createFirstInputButton ( group: HTMLDivElement ): void {
+	protected createTracks ( group: HTMLDivElement, amount: number ): void {
+		for ( let i = 0; i < amount; i++ ) {
+			this.mixGroup.get( group.id ).push( {
+				firstAnimation: undefined, lastAnimation: undefined, mixinTime: 0
+			} );
+			const config = this.spineConfig.track;
+			const track: HTMLDivElement = this.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config );
+			track.id = `${ config.id }${ this.mixGroup.size() - 1 }_${ i }`;
+			this.createTrackLabel( track, i );
+			this.createFirstInputButton( track, i, group.id );
+			this.createLastInputButton( track, i, group.id );
+			this.createMixinTimeInput( track, i );
+			group.appendChild( track );
+		}
+	}
+
+	protected createTrackLabel ( group: HTMLDivElement, trackIndex: number ): void {
+		const config = this.spineConfig.trackLabel;
+
+		const label: HTMLLabelElement = this.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config );
+		label.id = `${ config.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
+		label.textContent = config.textContent + trackIndex;
+		group.appendChild( label );
+		group.appendChild( document.createElement( HTMLElementType.BR ) );
+	}
+
+	protected createFirstInputButton ( group: HTMLDivElement, trackIndex: number, groupId: string ): void {
 		const config = this.spineConfig.firstAnimationButton;
 
-		const label: HTMLLabelElement = this.createHtmlElement<HTMLLabelElement>( 'label', config.label );
+		const label: HTMLLabelElement = this.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.label );
 		group.appendChild( label );
 
-		const button: HTMLButtonElement = this.createHtmlElement<HTMLButtonElement>( 'button', config.button );
-		button.id = config.button.id + ( this.mixGroup.size() - 1 );
+		const button: HTMLButtonElement = this.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.button );
+		button.id = `${ config.button.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
 		group.appendChild( button );
-		group.appendChild( document.createElement( 'br' ) );
+		group.appendChild( document.createElement( HTMLElementType.BR ) );
 
 		button.onclick = () => {
 			if ( !this.waitInputData.isWaiting ) {
 				button.textContent = 'Waiting...';
 				this.waitInputData.isWaiting = true;
 				this.waitInputData.targetId = button.id;
-				this.waitInputData.groupId = group.id;
+				this.waitInputData.groupId = groupId;
+				this.waitInputData.trackIndex = trackIndex;
+
 			} else {
 				button.textContent = '...';
 				this.waitInputData.isWaiting = false;
 				this.waitInputData.targetId = undefined;
 				this.waitInputData.groupId = undefined;
+				this.waitInputData.trackIndex = undefined;
 			}
 		};
 	}
 
-	protected createLastInputButton ( group: HTMLDivElement ): void {
+	protected createLastInputButton ( group: HTMLDivElement, trackIndex: number, groupId: string ): void {
 		const config = this.spineConfig.lastAnimationButton;
 
-		const label: HTMLLabelElement = this.createHtmlElement<HTMLLabelElement>( 'label', config.label );
+		const label: HTMLLabelElement = this.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.label );
 		group.appendChild( label );
 
-		const button: HTMLButtonElement = this.createHtmlElement<HTMLButtonElement>( 'button', config.button );
-		button.id = config.button.id + ( this.mixGroup.size() - 1 );
+		const button: HTMLButtonElement = this.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.button );
+		button.id = `${ config.button.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
 		group.appendChild( button );
-		group.appendChild( document.createElement( 'br' ) );
+		group.appendChild( document.createElement( HTMLElementType.BR ) );
 
 		button.onclick = () => {
 			if ( !this.waitInputData.isWaiting ) {
 				button.textContent = 'Waiting...';
 				this.waitInputData.isWaiting = true;
 				this.waitInputData.targetId = button.id;
-				this.waitInputData.groupId = group.id;
+				this.waitInputData.groupId = groupId;
+				this.waitInputData.trackIndex = trackIndex;
 			} else {
 				button.textContent = '...';
 				this.waitInputData.isWaiting = false;
 				this.waitInputData.targetId = undefined;
 				this.waitInputData.groupId = undefined;
+				this.waitInputData.groupId = undefined;
 			}
 		};
 	}
 
-	protected createMixinTimeInput ( group: HTMLDivElement ): void {
+	protected createMixinTimeInput ( group: HTMLDivElement, trackIndex: number ): void {
 		const config = this.spineConfig.mixin;
 
-		const label: HTMLLabelElement = this.createHtmlElement<HTMLLabelElement>( 'label', config.label );
-		label.id = config.label.id + ( this.mixGroup.size() - 1 );
+		const label: HTMLLabelElement = this.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.label );
+		label.id = `${ config.label.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
 		group.appendChild( label );
 
-		const input: HTMLInputElement = this.createHtmlElement<HTMLInputElement>( 'input', config.input );
-		input.id = config.input.id + ( this.mixGroup.size() - 1 );
+		const input: HTMLInputElement = this.createHTMLElement<HTMLInputElement>( HTMLElementType.INPUT, config.input );
+		input.id = `${ config.input.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
 		group.appendChild( input );
-		group.appendChild( document.createElement( 'br' ) );
+		group.appendChild( document.createElement( HTMLElementType.BR ) );
 	}
 
 	protected createPlayInput ( group: HTMLDivElement ): void {
 		const config = this.spineConfig.playButton;
-		const button: HTMLButtonElement = this.createHtmlElement<HTMLButtonElement>( 'button', config );
+		const button: HTMLButtonElement = this.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config );
 		const idNum = this.mixGroup.size() - 1;
 		button.id = config.id + idNum;
 		button.onclick = () => {
-			const mixConfig = this.mixGroup.get( group.id );
-			mixConfig.mixinTime = +( document.getElementById( 'Input_' + idNum ) as HTMLInputElement ).value / 1000;
-			if ( mixConfig.firstAnimation && mixConfig.lastAnimation ) {
-				this.animation.stateData.setMix( mixConfig.firstAnimation, mixConfig.lastAnimation, mixConfig.mixinTime );
-			}
-			this.animation.renderable = true;
-			if ( mixConfig.firstAnimation ) {
-				this.animation.state.setAnimation( 0, mixConfig.firstAnimation, false );
-			}
-			if ( mixConfig.lastAnimation ) {
-				if ( mixConfig.firstAnimation ) {
-					this.animation.state.addAnimation( 0, mixConfig.lastAnimation, false );
-				} else {
-					this.animation.state.setAnimation( 0, mixConfig.lastAnimation, false );
+			const mixConfigs = this.mixGroup.get( group.id );
+			mixConfigs.forEach( ( mixConfig, i ) => {
+				mixConfig.mixinTime = +( document.getElementById( `Input_${ idNum }_${ i }` ) as HTMLInputElement ).value / 1000;
+				if ( mixConfig.firstAnimation && mixConfig.lastAnimation ) {
+					this.animation.stateData.setMix( mixConfig.firstAnimation, mixConfig.lastAnimation, mixConfig.mixinTime );
 				}
-			}
+				this.animation.renderable = true;
+				if ( mixConfig.firstAnimation ) {
+					this.animation.state.setAnimation( i, mixConfig.firstAnimation, false );
+				}
+				if ( mixConfig.lastAnimation ) {
+					if ( mixConfig.firstAnimation ) {
+						this.animation.state.addAnimation( i, mixConfig.lastAnimation, false );
+					} else {
+						this.animation.state.setAnimation( i, mixConfig.lastAnimation, false );
+					}
+				}
+			} );
 		};
 		group.appendChild( button );
-		group.appendChild( document.createElement( 'br' ) );
+		group.appendChild( document.createElement( HTMLElementType.BR ) );
 	}
 
 	protected addEventListener (): void {
@@ -224,19 +252,20 @@ export class GmaeApplication {
 				} else if ( eventData.type == EventType.SET_ANIMATION_MIX ) {
 					document.getElementById( this.waitInputData.targetId ).textContent = eventData.data.animationName;
 					if ( this.waitInputData.targetId.includes( this.spineConfig.firstAnimationButton.button.id ) ) {
-						this.mixGroup.get( this.waitInputData.groupId ).firstAnimation = eventData.data.animationName;
+						this.mixGroup.get( this.waitInputData.groupId )[ this.waitInputData.trackIndex ].firstAnimation = eventData.data.animationName;
 					} else if ( this.waitInputData.targetId.includes( this.spineConfig.lastAnimationButton.button.id ) ) {
-						this.mixGroup.get( this.waitInputData.groupId ).lastAnimation = eventData.data.animationName;
+						this.mixGroup.get( this.waitInputData.groupId )[ this.waitInputData.trackIndex ].lastAnimation = eventData.data.animationName;
 					}
 					this.waitInputData.targetId = undefined;
 					this.waitInputData.groupId = undefined;
+					this.waitInputData.trackIndex = undefined;
 					this.waitInputData.isWaiting = false;
 				}
 			}
 		}, false );
 	}
 
-	protected createHtmlElement<T extends HTMLElement> ( type: string, config: IStyle ): T {
+	protected createHTMLElement<T extends HTMLElement> ( type: string, config: IStyle ): T {
 		const element = <T> document.createElement( type );
 		if ( config.id ) {
 			element.id = config.id;
@@ -271,6 +300,9 @@ export class GmaeApplication {
 		if ( config.margin ) {
 			element.style.margin = config.margin;
 		}
+		if ( config.backgroundColor ) {
+			element.style.backgroundColor = config.backgroundColor;
+		}
 		return element;
 	}
 
@@ -286,6 +318,7 @@ export interface IWaitInputData {
 	isWaiting: boolean;
 	targetId: string;
 	groupId: string;
+	trackIndex: number;
 }
 
 export interface IPostMessage {
@@ -293,8 +326,16 @@ export interface IPostMessage {
 	data: any;
 }
 
-export interface IMixGroup {
+export interface ITrackGroup {
 	firstAnimation: string;
 	lastAnimation: string;
 	mixinTime: number;
+}
+
+export enum HTMLElementType {
+	DIV = 'div',
+	BUTTON = 'button',
+	LABEL = 'label',
+	INPUT = 'input',
+	BR = 'br'
 }
