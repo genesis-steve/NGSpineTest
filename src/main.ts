@@ -112,8 +112,13 @@ export class GmaeApplication {
 		group.id = config.id + this.mixGroup.size();
 		this.mixGroup.set( group.id, [] );
 		this.animationMixer.appendChild( group );
+
 		this.createTracks( group, 2 );
 		this.createPlayInput( group );
+
+		const hiven = document.createElement( HTMLElementType.HR );
+		group.appendChild( hiven );
+
 		this.animationMixer.appendChild( this.addButton );
 	}
 
@@ -337,5 +342,6 @@ export enum HTMLElementType {
 	BUTTON = 'button',
 	LABEL = 'label',
 	INPUT = 'input',
-	BR = 'br'
+	BR = 'br',
+	HR = 'hr'
 }
