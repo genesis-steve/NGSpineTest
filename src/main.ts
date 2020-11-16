@@ -139,6 +139,11 @@ export class GmaeApplication {
 				this.waitInputData.isWaiting = true;
 				this.waitInputData.targetId = button.id;
 				this.waitInputData.groupId = group.id;
+			} else {
+				button.textContent = '...';
+				this.waitInputData.isWaiting = false;
+				this.waitInputData.targetId = undefined;
+				this.waitInputData.groupId = undefined;
 			}
 		};
 	}
@@ -160,6 +165,11 @@ export class GmaeApplication {
 				this.waitInputData.isWaiting = true;
 				this.waitInputData.targetId = button.id;
 				this.waitInputData.groupId = group.id;
+			} else {
+				button.textContent = '...';
+				this.waitInputData.isWaiting = false;
+				this.waitInputData.targetId = undefined;
+				this.waitInputData.groupId = undefined;
 			}
 		};
 	}
@@ -185,10 +195,20 @@ export class GmaeApplication {
 		button.onclick = () => {
 			const mixConfig = this.mixGroup.get( group.id );
 			mixConfig.mixinTime = +( document.getElementById( 'Input_' + idNum ) as HTMLInputElement ).value / 1000;
-			this.animation.stateData.setMix( mixConfig.firstAnimation, mixConfig.lastAnimation, mixConfig.mixinTime );
+			if ( mixConfig.firstAnimation && mixConfig.lastAnimation ) {
+				this.animation.stateData.setMix( mixConfig.firstAnimation, mixConfig.lastAnimation, mixConfig.mixinTime );
+			}
 			this.animation.renderable = true;
-			this.animation.state.setAnimation( 0, mixConfig.firstAnimation, false );
-			this.animation.state.addAnimation( 0, mixConfig.lastAnimation, false );
+			if ( mixConfig.firstAnimation ) {
+				this.animation.state.setAnimation( 0, mixConfig.firstAnimation, false );
+			}
+			if ( mixConfig.lastAnimation ) {
+				if ( mixConfig.firstAnimation ) {
+					this.animation.state.addAnimation( 0, mixConfig.lastAnimation, false );
+				} else {
+					this.animation.state.setAnimation( 0, mixConfig.lastAnimation, false );
+				}
+			}
 		};
 		group.appendChild( button );
 		group.appendChild( document.createElement( 'br' ) );
