@@ -2,24 +2,35 @@ export class SpineConfig implements ISpineConfig {
 	public assetName: string = 'LightningTallyMeter';
 	public position: IPoint;
 
-	public displayButtonContainer: IStyle = {
-		id: 'displayButtonContainer',
-		position: 'relative',
-		overflow: 'auto',
-		x: 720,
-		y: -1280,
-		width: 720,
-		height: 1280,
-		fontSize: 30,
-		margin: '0 10'
+	public singleAnimationDemo = {
+		label: {
+			id: 'singleAnimationDemoLabel',
+			textContent: 'Single Aanimation Demo',
+			fontSize: 60,
+			fontWeight: 'bold',
+			color: '#FFFFFF',
+			padding: '0 20',
+			backgroundColor: '#4A4A4A'
+		},
+		buttonContainer: {
+			id: 'singleAnimationDemo',
+			position: 'relative',
+			overflow: 'auto',
+			x: 720,
+			y: -1280,
+			width: 720,
+			height: 1280,
+			fontSize: 30,
+			margin: '0 10'
+		}
 	};
 
 	public animationMixer: IStyle = {
 		id: 'animationMixer',
 		position: 'relative',
 		overflow: 'auto',
-		x: this.displayButtonContainer.x + this.displayButtonContainer.width,
-		y: -1280 - this.displayButtonContainer.height,
+		x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width,
+		y: -1280 - this.singleAnimationDemo.buttonContainer.height,
 		width: 900,
 		height: 1280,
 		fontSize: 30,
@@ -111,7 +122,10 @@ export class SpineConfig implements ISpineConfig {
 export interface ISpineConfig {
 	assetName: string;
 	position: IPoint;
-	displayButtonContainer: IStyle;
+	singleAnimationDemo: {
+		label: IStyle,
+		buttonContainer: IStyle
+	};
 	animationMixer: IStyle;
 	animationButton: IStyle;
 	mixGroup: IStyle;
@@ -143,8 +157,11 @@ export interface IStyle {
 	width?: number;
 	height?: number;
 	fontSize?: number;
+	fontWeight?: string;
 	margin?: string;
+	padding?: string;
 	type?: string;
+	color?: string;
 	backgroundColor?: string;
 	accept?: string;
 }

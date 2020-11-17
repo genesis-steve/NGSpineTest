@@ -19,7 +19,7 @@ export class GmaeApplication {
 	protected mixGroup: TSMap<string, Array<ITrackGroup>>;
 
 	protected mainContainer: HTMLDivElement;
-	protected buttonContainer: HTMLDivElement;
+	protected singleAnimationDemo: HTMLDivElement;
 	protected animationMixer: HTMLDivElement;
 
 	protected addButton: HTMLButtonElement;
@@ -50,18 +50,24 @@ export class GmaeApplication {
 				this.animation = new spine.Spine( res[ this.spineConfig.assetName ].spineData );
 				this.animation.renderable = false;
 				this.pixi.stage.addChild( this.animation );
-				this.createTestButtons();
+				this.createSingleAnimationDemo();
 				this.createAnimationMixer();
 				this.addEventListener();
 			} );
 	}
 
-	protected createTestButtons (): void {
-		this.buttonContainer = this.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, this.spineConfig.displayButtonContainer );
-		this.mainContainer.appendChild( this.buttonContainer );
+	protected createSingleAnimationDemo (): void {
+		this.singleAnimationDemo = this.createHTMLElement<HTMLDivElement>(
+			HTMLElementType.DIV, this.spineConfig.singleAnimationDemo.buttonContainer
+		);
+		this.mainContainer.appendChild( this.singleAnimationDemo );
+
+		const label: HTMLParagraphElement = this.createHTMLElement<HTMLParagraphElement>(
+			HTMLElementType.LABEL, this.spineConfig.singleAnimationDemo.label
+		);
+		this.singleAnimationDemo.appendChild( label );
 
 		this.animation.spineData.animations.forEach( animation => {
-
 			const config = this.spineConfig.animationButton;
 			const button = this.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config );
 			button.id = animation.name + '_Btn';
@@ -83,8 +89,8 @@ export class GmaeApplication {
 					}, '*' );
 				}
 			};
-			this.buttonContainer.appendChild( button );
-			this.buttonContainer.appendChild( document.createElement( HTMLElementType.BR ) );
+			this.singleAnimationDemo.appendChild( button );
+			this.singleAnimationDemo.appendChild( document.createElement( HTMLElementType.BR ) );
 		} );
 	}
 
@@ -168,6 +174,8 @@ export class GmaeApplication {
 				this.waitInputData.trackIndex = trackIndex;
 
 			} else {
+				const mixConfig = this.mixGroup.get( groupId )[ this.waitInputData.trackIndex ];
+				mixConfig.firstAnimation = undefined;
 				button.textContent = '...';
 				this.waitInputData.isWaiting = false;
 				this.waitInputData.targetId = undefined;
@@ -196,11 +204,13 @@ export class GmaeApplication {
 				this.waitInputData.groupId = groupId;
 				this.waitInputData.trackIndex = trackIndex;
 			} else {
+				const mixConfig = this.mixGroup.get( groupId )[ this.waitInputData.trackIndex ];
+				mixConfig.lastAnimation = undefined;
 				button.textContent = '...';
 				this.waitInputData.isWaiting = false;
 				this.waitInputData.targetId = undefined;
 				this.waitInputData.groupId = undefined;
-				this.waitInputData.groupId = undefined;
+				this.waitInputData.trackIndex = undefined;
 			}
 		};
 	}
@@ -305,8 +315,17 @@ export class GmaeApplication {
 		if ( config.fontSize ) {
 			element.style.fontSize = config.fontSize.toString();
 		}
+		if ( config.fontWeight ) {
+			element.style.fontWeight = config.fontWeight;
+		}
 		if ( config.margin ) {
 			element.style.margin = config.margin;
+		}
+		if ( config.padding ) {
+			element.style.padding = config.padding;
+		}
+		if ( config.color ) {
+			element.style.color = config.color;
 		}
 		if ( config.backgroundColor ) {
 			element.style.backgroundColor = config.backgroundColor;
@@ -354,5 +373,6 @@ export enum HTMLElementType {
 	LABEL = 'label',
 	INPUT = 'input',
 	BR = 'br',
-	HR = 'hr'
+	HR = 'hr',
+	P = 'p'
 }
