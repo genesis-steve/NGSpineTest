@@ -2,6 +2,38 @@ export class SpineConfig implements ISpineConfig {
 	public assetName: string = 'LightningTallyMeter';
 	public position: IPoint;
 
+	public backgroundPalette: IStyle = {
+		id: 'backgroundPalette',
+		position: 'relative',
+		x: 720,
+		y: -1280,
+		width: 50,
+		height: 1280,
+		backgroundColor: '#E0E0E0'
+	};
+
+	public backgroundPaletteColorList: Array<string> = [
+		'#17202A',	// black
+		'#D5DBDB',	// gray
+		'#F7F9F9',	// white
+		'#F2D7D5',	// red
+		'#D7BDE2',	// purple
+		'#A9CCE3',	// blue
+		'#A3E4D7',	// green blue
+		'#A9DFBF',	// green
+		'#F9E79F ',	// yellow
+		'#F5CBA7 ',	// orange
+	];
+
+
+	public backgroundPaletteButton: IStyle = {
+		id: 'backgroundPaletteButton_',
+		position: 'relative',
+		width: 50,
+		height: 50,
+		backgroundColor: 'red'
+	};
+
 	public singleAnimationDemo = {
 		label: {
 			id: 'singleAnimationDemoLabel',
@@ -16,8 +48,8 @@ export class SpineConfig implements ISpineConfig {
 			id: 'singleAnimationDemo',
 			position: 'relative',
 			overflow: 'auto',
-			x: 720,
-			y: -1280,
+			x: 720 + this.backgroundPalette.width,
+			y: -1280 - this.backgroundPalette.height,
 			width: 720,
 			height: 1280,
 			fontSize: 30,
@@ -30,7 +62,7 @@ export class SpineConfig implements ISpineConfig {
 		position: 'relative',
 		overflow: 'auto',
 		x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width,
-		y: -1280 - this.singleAnimationDemo.buttonContainer.height,
+		y: this.singleAnimationDemo.buttonContainer.y - this.singleAnimationDemo.buttonContainer.height,
 		width: 900,
 		height: 1280,
 		fontSize: 30,
@@ -122,6 +154,9 @@ export class SpineConfig implements ISpineConfig {
 export interface ISpineConfig {
 	assetName: string;
 	position: IPoint;
+	backgroundPaletteColorList: Array<string>;
+	backgroundPaletteButton: IStyle;
+	backgroundPalette: IStyle;
 	singleAnimationDemo: {
 		label: IStyle,
 		buttonContainer: IStyle

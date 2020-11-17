@@ -50,10 +50,29 @@ export class GmaeApplication {
 				this.animation = new spine.Spine( res[ this.spineConfig.assetName ].spineData );
 				this.animation.renderable = false;
 				this.pixi.stage.addChild( this.animation );
+				this.createBackgroundPalette();
 				this.createSingleAnimationDemo();
 				this.createAnimationMixer();
 				this.addEventListener();
 			} );
+	}
+
+	protected createBackgroundPalette (): void {
+		const palette: HTMLDivElement = this.createHTMLElement(
+			HTMLElementType.DIV, this.spineConfig.backgroundPalette
+		);
+		this.mainContainer.appendChild( palette );
+		this.spineConfig.backgroundPaletteColorList.forEach( color => {
+			const paletteButton: HTMLButtonElement = this.createHTMLElement(
+				HTMLElementType.BUTTON, {
+				...this.spineConfig.backgroundPaletteButton,
+				backgroundColor: color
+			} );
+			paletteButton.onclick = () => {
+				this.pixi.renderer.backgroundColor = +color.replace( '#', '0x' );
+			};
+			palette.appendChild( paletteButton );
+		} );
 	}
 
 	protected createSingleAnimationDemo (): void {
