@@ -270,8 +270,11 @@ export class GmaeApplication {
 		}, false );
 	}
 
-	protected createHTMLElement<T extends HTMLElement> ( type: string, config: IStyle ): T {
+	protected createHTMLElement<T extends HTMLElement> ( type: string, config?: IStyle ): T {
 		const element = <T> document.createElement( type );
+		if ( !config ) {
+			return element;
+		}
 		if ( config.id ) {
 			element.id = config.id;
 		}
@@ -307,6 +310,14 @@ export class GmaeApplication {
 		}
 		if ( config.backgroundColor ) {
 			element.style.backgroundColor = config.backgroundColor;
+		}
+		if ( type == HTMLElementType.INPUT ) {
+			if ( config.type ) {
+				( element as HTMLElement as HTMLInputElement ).type = config.type;
+			}
+			if ( config.accept ) {
+				( element as HTMLElement as HTMLInputElement ).accept = config.accept;
+			}
 		}
 		return element;
 	}

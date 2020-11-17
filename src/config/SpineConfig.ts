@@ -146,6 +146,7 @@ export interface IStyle {
 	margin?: string;
 	type?: string;
 	backgroundColor?: string;
+	accept?: string;
 }
 
 export interface IInputAnimationButton {
