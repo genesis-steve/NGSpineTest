@@ -40,7 +40,37 @@ export class GmaeApplication {
 
 	protected createElements (): void {
 		this.mainContainer = <HTMLDivElement> document.getElementById( 'mainContainer' );
-		this.setupAnimation();
+		// this.setupAnimation();
+		const uploadButton: HTMLInputElement = this.createHTMLElement( HTMLElementType.INPUT, {
+			position: 'relative',
+			type: 'file',
+			accept: '.json',
+			x: 750,
+			y: -650,
+			fontSize: 60
+		} );
+		uploadButton.addEventListener( 'change', function ( e ) {
+			console.error( 'uploadButton.e : ', e );
+			console.error( 'uploadButton.e.target : ', e.target );
+			const files = this.files;
+			const fileReader = new FileReader();
+			fileReader.readAsDataURL( files[ 0 ] );
+			fileReader.onload = ( e ) => {
+				console.error( 'fileReader.e : ', e );
+				console.error( 'fileReader.e.target : ', e.target );
+			};
+			var url = null;
+			if ( window[ 'createObjcectURL' ] != undefined ) {
+				url = window[ 'createObjcectURL' ]( files[ 0 ] );
+			} else if ( window.URL != undefined ) {
+				url = window.URL.createObjectURL( files[ 0 ] );
+			} else if ( window.webkitURL != undefined ) {
+				url = window.webkitURL.createObjectURL( files[ 0 ] );
+			}
+			console.error( 'url : ', url );
+
+		} );
+		this.mainContainer.appendChild( uploadButton );
 	}
 
 	protected setupAnimation (): void {
