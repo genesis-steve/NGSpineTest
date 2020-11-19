@@ -1,5 +1,4 @@
 export class SpineConfig implements ISpineConfig {
-	public assetName: string = 'LightningTallyMeter';
 	public position: IPoint;
 
 	public backgroundPalette: IStyle = {
@@ -149,10 +148,88 @@ export class SpineConfig implements ISpineConfig {
 		fontSize: 30,
 		margin: '10 0'
 	};
+
+	public uploadButtons: IUploadButtons = {
+		IMAGE: {
+			label: {
+				id: 'uploadLabel_IMAGE',
+				htmlFor: 'uploadInput_IMAGE',
+				position: 'relative',
+				x: 750,
+				y: -850,
+				fontSize: 60,
+				padding: '6px 12px',
+				textContent: 'Upload IMAGE : ',
+				display: 'inline-block'
+			},
+			input: {
+				id: 'uploadInput_IMAGE',
+				type: 'file',
+				accept: '.png',
+				position: 'relative',
+				x: 750,
+				y: -850,
+				fontSize: 60
+			}
+		},
+		ATLAS: {
+			label: {
+				id: 'uploadLabel_ATLAS',
+				htmlFor: 'uploadInput_ATLAS',
+				position: 'relative',
+				x: 750,
+				y: -800,
+				fontSize: 60,
+				padding: '6px 12px',
+				textContent: 'Upload ATLAS : ',
+				display: 'inline-block'
+			},
+			input: {
+				id: 'uploadInput_ATLAS',
+				type: 'file',
+				accept: '.atlas',
+				position: 'relative',
+				x: 750,
+				y: -800,
+				fontSize: 60
+			}
+		},
+		JSON: {
+			label: {
+				id: 'uploadLabel_JSON',
+				htmlFor: 'uploadInput_JSON',
+				position: 'relative',
+				x: 750,
+				y: -750,
+				fontSize: 60,
+				padding: '6px 12px',
+				textContent: 'Upload JSON : ',
+				display: 'inline-block'
+			},
+			input: {
+				id: 'uploadInput_JSON',
+				type: 'file',
+				accept: '.json',
+				position: 'relative',
+				x: 750,
+				y: -750,
+				fontSize: 60
+			}
+		}
+	};
+
+	public uploadConfirmButton: IStyle = {
+		id: 'uploadConfirmButton',
+		type: 'button',
+		value: 'Confirm',
+		position: 'relative',
+		x: 750,
+		y: -700,
+		fontSize: 60
+	};
 }
 
 export interface ISpineConfig {
-	assetName: string;
 	position: IPoint;
 	backgroundPaletteColorList: Array<string>;
 	backgroundPaletteButton: IStyle;
@@ -174,6 +251,23 @@ export interface ISpineConfig {
 	};
 	playButton: IStyle;
 	addButton: IStyle;
+	uploadButtons: IUploadButtons;
+	uploadConfirmButton: IStyle;
+}
+
+export interface IUploadButtons {
+	IMAGE: {
+		label: IStyle;
+		input: IStyle;
+	};
+	ATLAS: {
+		label: IStyle;
+		input: IStyle;
+	};
+	JSON: {
+		label: IStyle;
+		input: IStyle;
+	};
 }
 
 export interface IPoint {
@@ -183,8 +277,8 @@ export interface IPoint {
 
 export interface IStyle {
 	id?: string;
-	textContent?: string;
-	value?: string;
+	margin?: string;
+	padding?: string;
 	position?: string;
 	overflow?: string;
 	x?: number;
@@ -193,11 +287,20 @@ export interface IStyle {
 	height?: number;
 	fontSize?: number;
 	fontWeight?: string;
-	margin?: string;
-	padding?: string;
-	type?: string;
 	color?: string;
 	backgroundColor?: string;
+	textContent?: string;
+	display?: string;
+	value?: string;
+	cursor?: string;
+	border?: string;
+	boxShadow?: string;
+
+	/** label */
+	htmlFor?: string;
+
+	/** input */
+	type?: string;
 	accept?: string;
 }
 

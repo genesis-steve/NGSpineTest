@@ -1,8 +1,11 @@
 import { TSMap } from 'typescript-map';
-import { Application, spine } from 'pixi.js';
+import * as PIXI from 'pixi.js';
+window.PIXI = PIXI;
 import 'pixi-spine';
+import { Application, spine, Loader, LoaderResource, IResourceDictionary } from 'pixi.js';
 import { ISpineConfig, IStyle, SpineConfig } from 'src/config/SpineConfig';
 import { IMainConfig, MainConfig } from 'src/config/MainConfig';
+import { AtlasParser } from 'src/utils/AtlasParser';
 
 window.onload = () => {
 	new GmaeApplication();
@@ -13,12 +16,16 @@ export class GmaeApplication {
 	protected appConfig: IMainConfig;
 	protected spineConfig: ISpineConfig;
 
+	protected assetName: string;
+
 	protected pixi: Application;
+	protected loader: Loader;
 	protected animation: spine.Spine;
 
 	protected mixGroup: TSMap<string, Array<ITrackGroup>>;
 
 	protected mainContainer: HTMLDivElement;
+	protected uploadContainer: HTMLDivElement;
 	protected singleAnimationDemo: HTMLDivElement;
 	protected animationMixer: HTMLDivElement;
 
@@ -31,6 +38,8 @@ export class GmaeApplication {
 		trackIndex: undefined
 	};
 
+	protected loadUrls: TSMap<string, string> = new TSMap();
+
 	constructor () {
 		this.appConfig = new MainConfig();
 		this.pixi = new Application( this.appConfig );
@@ -39,22 +48,109 @@ export class GmaeApplication {
 	}
 
 	protected createElements (): void {
+		this.spineConfig = new SpineConfig();
+		window.addEventListener( 'message', ( e ) => {
+			if ( !e.data || e.data.type !== 'uploadConfirm' ) { return; }
+			this.loader = new Loader();
+			this.loadUrls.forEach( ( url, extension ) => {
+				let loadType: number = LoaderResource.LOAD_TYPE.XHR;
+				if ( extension == LoadExtension.PNG ) {
+					loadType = LoaderResource.LOAD_TYPE.IMAGE;
+				}
+				let xhrType: string;
+				if ( loadType == LoaderResource.LOAD_TYPE.XHR ) {
+					if ( extension == LoadExtension.JSON ) {
+						xhrType = LoaderResource.XHR_RESPONSE_TYPE.JSON;
+					}
+				}
+				this.loader.add(
+					`${ this.assetName }.${ extension }`,
+					url, {
+					loadType, xhrType
+				} );
+			} );
+			this.loader.onComplete.add( () => {
+				this.processResourceJson();
+				this.onCompleteUpload( this.loader.resources );
+			} );
+			this.loader.load();
+		} );
 		this.mainContainer = <HTMLDivElement> document.getElementById( 'mainContainer' );
-		this.setupAnimation();
+		this.mainContainer.appendChild( this.createHTMLElement( HTMLElementType.BR ) );
+
+		this.uploadContainer = this.createHTMLElement( HTMLElementType.DIV );
+		this.mainContainer.appendChild( this.uploadContainer );
+
+		this.createUploadButton( LoadExtension.PNG, this.spineConfig.uploadButtons.IMAGE );
+		this.createUploadButton( LoadExtension.ATLAS, this.spineConfig.uploadButtons.ATLAS );
+		this.createUploadButton( LoadExtension.JSON, this.spineConfig.uploadButtons.JSON );
+		this.createUploadConfirmButton();
 	}
 
-	protected setupAnimation (): void {
-		this.spineConfig = new SpineConfig();
-		PIXI.loader.add( this.spineConfig.assetName, `assets/${ this.spineConfig.assetName }.json` )
-			.load( ( loader, res ) => {
-				this.animation = new spine.Spine( res[ this.spineConfig.assetName ].spineData );
-				this.animation.renderable = false;
-				this.pixi.stage.addChild( this.animation );
-				this.createBackgroundPalette();
-				this.createSingleAnimationDemo();
-				this.createAnimationMixer();
-				this.addEventListener();
-			} );
+	protected processResourceJson (): void {
+		this.loader.resources[ `${ this.assetName }.${ LoadExtension.JSON }_atlas` ] = undefined;
+		const resourceJson = this.loader.resources[ `${ this.assetName }.${ LoadExtension.JSON }` ];
+		const resourceAtlas = this.loader.resources[ `${ this.assetName }.${ LoadExtension.ATLAS }` ];
+		resourceJson.extension = LoadExtension.JSON;
+		resourceJson.metadata.atlasRawData = resourceAtlas.data;
+		AtlasParser.parseJson(
+			this.loader, this.loader.resources[ `${ this.assetName }.${ LoadExtension.JSON }` ],
+			this.loadUrls.get( LoadExtension.ATLAS ),
+			this.loadUrls.get( LoadExtension.PNG )
+		);
+	}
+
+	protected onCompleteUpload ( res: IResourceDictionary ): void {
+		this.mainContainer.removeChild( this.uploadContainer );
+		this.animation = new spine.Spine( res[ this.assetName + '.json' ].spineData );
+		this.animation.renderable = false;
+		this.pixi.stage.addChild( this.animation );
+		this.createBackgroundPalette();
+		this.createSingleAnimationDemo();
+		this.createAnimationMixer();
+		this.addEventListener();
+	}
+
+	protected createUploadButton ( loadType: string, config: { label: IStyle, input: IStyle } ): void {
+		const uploadLabel: HTMLInputElement = this.createHTMLElement(
+			HTMLElementType.LABEL, config.label
+		);
+		const uploadInput: HTMLInputElement = this.createHTMLElement(
+			HTMLElementType.INPUT, config.input
+		);
+		uploadInput.addEventListener( 'change', ( e ) => {
+			const files = uploadInput.files;
+			let url: string;
+			if ( window[ 'createObjcectURL' ] != undefined ) {
+				url = window[ 'createObjcectURL' ]( files[ 0 ] );
+			} else if ( window.URL != undefined ) {
+				url = window.URL.createObjectURL( files[ 0 ] );
+			} else if ( window.webkitURL != undefined ) {
+				url = window.webkitURL.createObjectURL( files[ 0 ] );
+			}
+			this.loadUrls.set( loadType, url );
+			if ( loadType == LoadExtension.JSON ) {
+				this.assetName = files[ 0 ].name.replace( '.json', '' );
+			}
+		} );
+		this.uploadContainer.appendChild( uploadLabel );
+		this.uploadContainer.appendChild( uploadInput );
+		this.uploadContainer.appendChild( this.createHTMLElement( HTMLElementType.BR ) );
+	}
+
+	protected createUploadConfirmButton (): void {
+		const uploadConfirmButton = this.createHTMLElement(
+			HTMLElementType.INPUT, this.spineConfig.uploadConfirmButton
+		);
+		uploadConfirmButton.onclick = () => {
+			if ( !Object.values( LoadExtension ).every( e => this.loadUrls.keys().includes( e ) ) ) {
+				return;
+			}
+			window.postMessage( {
+				type: 'uploadConfirm'
+			}, '*' );
+		};
+		this.uploadContainer.appendChild( uploadConfirmButton );
 	}
 
 	protected createBackgroundPalette (): void {
@@ -265,7 +361,7 @@ export class GmaeApplication {
 				}
 				if ( mixConfig.lastAnimation ) {
 					if ( mixConfig.firstAnimation ) {
-						this.animation.state.addAnimation( i, mixConfig.lastAnimation, false );
+						this.animation.state.addAnimation( i, mixConfig.lastAnimation, false, 0 );
 					} else {
 						this.animation.state.setAnimation( i, mixConfig.lastAnimation, false );
 					}
@@ -310,9 +406,6 @@ export class GmaeApplication {
 		if ( config.textContent ) {
 			element.textContent = config.textContent;
 		}
-		if ( config.value ) {
-			( element as any ).value = config.value;
-		}
 		if ( config.position ) {
 			element.style.position = config.position;
 		}
@@ -343,11 +436,33 @@ export class GmaeApplication {
 		if ( config.padding ) {
 			element.style.padding = config.padding;
 		}
+		if ( config.border ) {
+			element.style.border = config.border;
+		}
 		if ( config.color ) {
 			element.style.color = config.color;
 		}
 		if ( config.backgroundColor ) {
 			element.style.backgroundColor = config.backgroundColor;
+		}
+		if ( config.display ) {
+			( element as HTMLElement as HTMLInputElement ).style.display = config.display;
+		}
+		if ( config.cursor ) {
+			element.style.cursor = config.cursor;
+		}
+		if ( config.boxShadow ) {
+			element.style.boxShadow = config.boxShadow;
+		}
+		if ( type == HTMLElementType.INPUT || type == HTMLElementType.BUTTON ) {
+			if ( config.value ) {
+				( element as any ).value = config.value;
+			}
+		}
+		if ( type == HTMLElementType.LABEL ) {
+			if ( config.htmlFor ) {
+				( element as HTMLElement as HTMLLabelElement ).htmlFor = config.htmlFor;
+			}
 		}
 		if ( type == HTMLElementType.INPUT ) {
 			if ( config.type ) {
@@ -394,4 +509,10 @@ export enum HTMLElementType {
 	BR = 'br',
 	HR = 'hr',
 	P = 'p'
+}
+
+export enum LoadExtension {
+	PNG = 'png',
+	ATLAS = 'altas',
+	JSON = 'json'
 }

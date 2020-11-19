@@ -14,11 +14,7 @@ module.exports = {
 				test: /\.tsx?$/,
 				use: 'ts-loader',
 				exclude: /node_modules/,
-			},
-			{
-				test: /pixi\.js$/,
-				use: 'expose-loader?PIXI'
-			},
+			}
 		]
 	},
 	resolve: {
@@ -28,7 +24,6 @@ module.exports = {
 			Path.resolve( appDir, 'node_modules' )
 		],
 		alias: {
-			'pixi': Path.resolve( appDir, 'node_modules/pixi.js/dist/pixi.js' ),
 			'src': Path.resolve( appDir, 'src/' )
 		}
 	},
