@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js';
 window.PIXI = PIXI;
 import 'pixi-spine';
 import { Application, spine, Loader, LoaderResource, IResourceDictionary } from 'pixi.js';
-import { ISpineConfig, IStyle, SpineConfig } from 'src/config/SpineConfig';
+import { IInputAnimationButton, IMixin, ISpineConfig, IStyle, SpineConfig } from 'src/config/SpineConfig';
 import { IMainConfig, MainConfig } from 'src/config/MainConfig';
 import { AtlasParser } from 'src/utils/AtlasParser';
 
@@ -42,42 +42,49 @@ export class GmaeApplication {
 
 	constructor () {
 		this.appConfig = new MainConfig();
-		this.pixi = new Application( this.appConfig );
 		document.title = this.appConfig.title;
+		document.body.style.overflow = 'hidden';
 		this.createElements();
 	}
 
 	protected createElements (): void {
 		this.spineConfig = new SpineConfig();
 		window.addEventListener( 'message', ( e ) => {
-			if ( !e.data || e.data.type !== 'uploadConfirm' ) { return; }
-			this.loader = new Loader();
-			this.loadUrls.forEach( ( url, extension ) => {
-				let loadType: number = LoaderResource.LOAD_TYPE.XHR;
-				if ( extension == LoadExtension.PNG ) {
-					loadType = LoaderResource.LOAD_TYPE.IMAGE;
-				}
-				let xhrType: string;
-				if ( loadType == LoaderResource.LOAD_TYPE.XHR ) {
-					if ( extension == LoadExtension.JSON ) {
-						xhrType = LoaderResource.XHR_RESPONSE_TYPE.JSON;
-					}
-				}
-				this.loader.add(
-					`${ this.assetName }.${ extension }`,
-					url, {
-					loadType, xhrType
-				} );
-			} );
-			this.loader.onComplete.add( () => {
-				this.processResourceJson();
-				this.onCompleteUpload( this.loader.resources );
-			} );
-			this.loader.load();
+			this.loadResource( e )
 		} );
 		this.mainContainer = <HTMLDivElement> document.getElementById( 'mainContainer' );
 		this.mainContainer.appendChild( this.createHTMLElement( HTMLElementType.BR ) );
+		this.createUploadPage();
+	}
 
+	protected loadResource ( e: MessageEvent<any> ): void {
+		if ( !e.data || e.data.type !== 'uploadConfirm' ) {
+			return;
+		}
+		window.removeEventListener( 'message', ( e ) => {
+			this.loadResource( e )
+		} );
+		this.loader = new Loader();
+		this.loadUrls.forEach( ( url, extension ) => {
+			let loadType: number = LoaderResource.LOAD_TYPE.XHR;
+			if ( extension == LoadExtension.PNG ) {
+				loadType = LoaderResource.LOAD_TYPE.IMAGE;
+			}
+			let xhrType: string;
+			if ( loadType == LoaderResource.LOAD_TYPE.XHR && extension == LoadExtension.JSON ) {
+				xhrType = LoaderResource.XHR_RESPONSE_TYPE.JSON;
+			}
+			const fullAssetName: string = `${ this.assetName }.${ extension }`;
+			this.loader.add( fullAssetName, url, { loadType, xhrType } );
+		} );
+		this.loader.onComplete.add( () => {
+			this.processResourceJson();
+			this.onCompleteUpload( this.loader.resources );
+		} );
+		this.loader.load();
+	}
+
+	protected createUploadPage (): void {
 		this.uploadContainer = this.createHTMLElement( HTMLElementType.DIV );
 		this.mainContainer.appendChild( this.uploadContainer );
 
@@ -89,8 +96,8 @@ export class GmaeApplication {
 
 	protected processResourceJson (): void {
 		this.loader.resources[ `${ this.assetName }.${ LoadExtension.JSON }_atlas` ] = undefined;
-		const resourceJson = this.loader.resources[ `${ this.assetName }.${ LoadExtension.JSON }` ];
-		const resourceAtlas = this.loader.resources[ `${ this.assetName }.${ LoadExtension.ATLAS }` ];
+		const resourceJson: LoaderResource = this.loader.resources[ `${ this.assetName }.${ LoadExtension.JSON }` ];
+		const resourceAtlas: LoaderResource = this.loader.resources[ `${ this.assetName }.${ LoadExtension.ATLAS }` ];
 		resourceJson.extension = LoadExtension.JSON;
 		resourceJson.metadata.atlasRawData = resourceAtlas.data;
 		AtlasParser.parseJson(
@@ -102,13 +109,27 @@ export class GmaeApplication {
 
 	protected onCompleteUpload ( res: IResourceDictionary ): void {
 		this.mainContainer.removeChild( this.uploadContainer );
+		this.pixi = new Application( this.appConfig );
 		this.animation = new spine.Spine( res[ this.assetName + '.json' ].spineData );
+		this.animation.scale.set( 0.5, 0.5 )
 		this.animation.renderable = false;
 		this.pixi.stage.addChild( this.animation );
 		this.createBackgroundPalette();
 		this.createSingleAnimationDemo();
 		this.createAnimationMixer();
 		this.addEventListener();
+	}
+
+	protected getObjectUrl ( file: File ): string {
+		if ( window[ 'createObjcectURL' ] != undefined ) {
+			return window[ 'createObjcectURL' ]( file );
+		} else if ( window.URL != undefined ) {
+			return window.URL.createObjectURL( file );
+		} else if ( window.webkitURL != undefined ) {
+			return window.webkitURL.createObjectURL( file );
+		} else {
+			return undefined;
+		}
 	}
 
 	protected createUploadButton ( loadType: string, config: { label: IStyle, input: IStyle } ): void {
@@ -119,18 +140,10 @@ export class GmaeApplication {
 			HTMLElementType.INPUT, config.input
 		);
 		uploadInput.addEventListener( 'change', ( e ) => {
-			const files = uploadInput.files;
-			let url: string;
-			if ( window[ 'createObjcectURL' ] != undefined ) {
-				url = window[ 'createObjcectURL' ]( files[ 0 ] );
-			} else if ( window.URL != undefined ) {
-				url = window.URL.createObjectURL( files[ 0 ] );
-			} else if ( window.webkitURL != undefined ) {
-				url = window.webkitURL.createObjectURL( files[ 0 ] );
-			}
-			this.loadUrls.set( loadType, url );
+			const file: File = uploadInput.files[ 0 ];
+			this.loadUrls.set( loadType, this.getObjectUrl( file ) );
 			if ( loadType == LoadExtension.JSON ) {
-				this.assetName = files[ 0 ].name.replace( '.json', '' );
+				this.assetName = file.name.replace( '.json', '' );
 			}
 		} );
 		this.uploadContainer.appendChild( uploadLabel );
@@ -139,7 +152,7 @@ export class GmaeApplication {
 	}
 
 	protected createUploadConfirmButton (): void {
-		const uploadConfirmButton = this.createHTMLElement(
+		const uploadConfirmButton: HTMLInputElement = this.createHTMLElement(
 			HTMLElementType.INPUT, this.spineConfig.uploadConfirmButton
 		);
 		uploadConfirmButton.onclick = () => {
@@ -181,10 +194,11 @@ export class GmaeApplication {
 			HTMLElementType.LABEL, this.spineConfig.singleAnimationDemo.label
 		);
 		this.singleAnimationDemo.appendChild( label );
+		this.singleAnimationDemo.appendChild( this.createHTMLElement( HTMLElementType.BR ) );
 
 		this.animation.spineData.animations.forEach( animation => {
-			const config = this.spineConfig.animationButton;
-			const button = this.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config );
+			const config: IStyle = this.spineConfig.animationButton;
+			const button: HTMLButtonElement = this.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config );
 			button.id = animation.name + '_Btn';
 			button.textContent = animation.name;
 			button.onclick = () => {
@@ -228,7 +242,7 @@ export class GmaeApplication {
 
 	protected createMixGroup (): void {
 		this.animationMixer.removeChild( this.addButton );
-		const config = this.spineConfig.mixGroup;
+		const config: IStyle = this.spineConfig.mixGroup;
 		const group: HTMLDivElement = this.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config );
 		group.id = config.id + this.mixGroup.size();
 		this.mixGroup.set( group.id, [] );
@@ -237,7 +251,7 @@ export class GmaeApplication {
 		this.createTracks( group, 2 );
 		this.createPlayInput( group );
 
-		const hiven = document.createElement( HTMLElementType.HR );
+		const hiven: HTMLHRElement = document.createElement( HTMLElementType.HR );
 		group.appendChild( hiven );
 
 		this.animationMixer.appendChild( this.addButton );
@@ -248,7 +262,7 @@ export class GmaeApplication {
 			this.mixGroup.get( group.id ).push( {
 				firstAnimation: undefined, lastAnimation: undefined, mixinTime: 0
 			} );
-			const config = this.spineConfig.track;
+			const config: IStyle = this.spineConfig.track;
 			const track: HTMLDivElement = this.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config );
 			track.id = `${ config.id }${ this.mixGroup.size() - 1 }_${ i }`;
 			this.createTrackLabel( track, i );
@@ -260,7 +274,7 @@ export class GmaeApplication {
 	}
 
 	protected createTrackLabel ( group: HTMLDivElement, trackIndex: number ): void {
-		const config = this.spineConfig.trackLabel;
+		const config: IStyle = this.spineConfig.trackLabel;
 
 		const label: HTMLLabelElement = this.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config );
 		label.id = `${ config.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
@@ -270,7 +284,7 @@ export class GmaeApplication {
 	}
 
 	protected createFirstInputButton ( group: HTMLDivElement, trackIndex: number, groupId: string ): void {
-		const config = this.spineConfig.firstAnimationButton;
+		const config: IInputAnimationButton = this.spineConfig.firstAnimationButton;
 
 		const label: HTMLLabelElement = this.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.label );
 		group.appendChild( label );
@@ -289,7 +303,7 @@ export class GmaeApplication {
 				this.waitInputData.trackIndex = trackIndex;
 
 			} else {
-				const mixConfig = this.mixGroup.get( groupId )[ this.waitInputData.trackIndex ];
+				const mixConfig: ITrackGroup = this.mixGroup.get( groupId )[ this.waitInputData.trackIndex ];
 				mixConfig.firstAnimation = undefined;
 				button.textContent = '...';
 				this.waitInputData.isWaiting = false;
@@ -301,7 +315,7 @@ export class GmaeApplication {
 	}
 
 	protected createLastInputButton ( group: HTMLDivElement, trackIndex: number, groupId: string ): void {
-		const config = this.spineConfig.lastAnimationButton;
+		const config: IInputAnimationButton = this.spineConfig.lastAnimationButton;
 
 		const label: HTMLLabelElement = this.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.label );
 		group.appendChild( label );
@@ -319,7 +333,7 @@ export class GmaeApplication {
 				this.waitInputData.groupId = groupId;
 				this.waitInputData.trackIndex = trackIndex;
 			} else {
-				const mixConfig = this.mixGroup.get( groupId )[ this.waitInputData.trackIndex ];
+				const mixConfig: ITrackGroup = this.mixGroup.get( groupId )[ this.waitInputData.trackIndex ];
 				mixConfig.lastAnimation = undefined;
 				button.textContent = '...';
 				this.waitInputData.isWaiting = false;
@@ -331,7 +345,7 @@ export class GmaeApplication {
 	}
 
 	protected createMixinTimeInput ( group: HTMLDivElement, trackIndex: number ): void {
-		const config = this.spineConfig.mixin;
+		const config: IMixin = this.spineConfig.mixin;
 
 		const label: HTMLLabelElement = this.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.label );
 		label.id = `${ config.label.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
@@ -344,12 +358,12 @@ export class GmaeApplication {
 	}
 
 	protected createPlayInput ( group: HTMLDivElement ): void {
-		const config = this.spineConfig.playButton;
+		const config: IStyle = this.spineConfig.playButton;
 		const button: HTMLButtonElement = this.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config );
-		const idNum = this.mixGroup.size() - 1;
+		const idNum: number = this.mixGroup.size() - 1;
 		button.id = config.id + idNum;
 		button.onclick = () => {
-			const mixConfigs = this.mixGroup.get( group.id );
+			const mixConfigs: Array<ITrackGroup> = this.mixGroup.get( group.id );
 			mixConfigs.forEach( ( mixConfig, i ) => {
 				mixConfig.mixinTime = +( document.getElementById( `Input_${ idNum }_${ i }` ) as HTMLInputElement ).value / 1000;
 				if ( mixConfig.firstAnimation && mixConfig.lastAnimation ) {
@@ -396,7 +410,7 @@ export class GmaeApplication {
 	}
 
 	protected createHTMLElement<T extends HTMLElement> ( type: string, config?: IStyle ): T {
-		const element = <T> document.createElement( type );
+		const element: T = <T> document.createElement( type );
 		if ( !config ) {
 			return element;
 		}

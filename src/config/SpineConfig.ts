@@ -1,20 +1,24 @@
+import { MainConfig } from 'src/config/MainConfig';
+
 export class SpineConfig implements ISpineConfig {
 	public position: IPoint;
+
+	protected mainConfig = new MainConfig;
 
 	public backgroundPalette: IStyle = {
 		id: 'backgroundPalette',
 		position: 'relative',
-		x: 720,
-		y: -1280,
+		x: this.mainConfig.width,
+		y: -this.mainConfig.height,
 		width: 50,
-		height: 1280,
+		height: this.mainConfig.height,
 		backgroundColor: '#E0E0E0'
 	};
 
 	public backgroundPaletteColorList: Array<string> = [
-		'#17202A',	// black
+		'#000000',	// black
 		'#D5DBDB',	// gray
-		'#F7F9F9',	// white
+		'#FFFFFF',	// white
 		'#F2D7D5',	// red
 		'#D7BDE2',	// purple
 		'#A9CCE3',	// blue
@@ -37,21 +41,21 @@ export class SpineConfig implements ISpineConfig {
 		label: {
 			id: 'singleAnimationDemoLabel',
 			textContent: 'Single Aanimation Demo',
-			fontSize: 60,
+			fontSize: 30,
 			fontWeight: 'bold',
 			color: '#FFFFFF',
-			padding: '0 20',
+			padding: '0 10',
 			backgroundColor: '#4A4A4A'
 		},
 		buttonContainer: {
 			id: 'singleAnimationDemo',
 			position: 'relative',
 			overflow: 'auto',
-			x: 720 + this.backgroundPalette.width,
-			y: -1280 - this.backgroundPalette.height,
-			width: 720,
-			height: 1280,
-			fontSize: 30,
+			x: this.mainConfig.width + this.backgroundPalette.width,
+			y: -this.mainConfig.height - this.backgroundPalette.height,
+			width: this.mainConfig.width,
+			height: this.mainConfig.height,
+			fontSize: 15,
 			margin: '0 10'
 		}
 	};
@@ -62,15 +66,15 @@ export class SpineConfig implements ISpineConfig {
 		overflow: 'auto',
 		x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width,
 		y: this.singleAnimationDemo.buttonContainer.y - this.singleAnimationDemo.buttonContainer.height,
-		width: 900,
-		height: 1280,
-		fontSize: 30,
+		width: 400,
+		height: this.mainConfig.height,
+		fontSize: 15,
 		margin: '0 20'
 	};
 
 	public animationButton: IStyle = {
-		fontSize: 30,
-		margin: '10 0'
+		fontSize: 15,
+		margin: '5 0'
 	};
 
 	public mixGroup: IStyle = {
@@ -92,14 +96,14 @@ export class SpineConfig implements ISpineConfig {
 		label: {
 			id: 'FirstAnimLabel_',
 			textContent: 'First Animation : ',
-			fontSize: 30,
-			margin: '10 0'
+			fontSize: 15,
+			margin: '5 0'
 		},
 		button: {
 			id: 'FirstAnimBtn_',
 			textContent: '...',
-			fontSize: 30,
-			margin: '10 0'
+			fontSize: 15,
+			margin: '5 0'
 		}
 	};
 
@@ -107,14 +111,14 @@ export class SpineConfig implements ISpineConfig {
 		label: {
 			id: 'LastAnimLabel_',
 			textContent: 'Last Animation : ',
-			fontSize: 30,
-			margin: '10 0'
+			fontSize: 15,
+			margin: '5 0'
 		},
 		button: {
 			id: 'LastAnimBtn_',
 			textContent: '...',
-			fontSize: 30,
-			margin: '10 0'
+			fontSize: 15,
+			margin: '5 0'
 		}
 	};
 
@@ -122,15 +126,15 @@ export class SpineConfig implements ISpineConfig {
 		label: {
 			id: 'MixinLabel_',
 			textContent: 'Set Mix Time (ms) : ',
-			fontSize: 30,
-			margin: '10 0'
+			fontSize: 15,
+			margin: '5 0'
 		},
 		input: {
 			id: 'Input_',
 			type: 'text',
 			value: '0',
-			fontSize: 30,
-			margin: '10 0',
+			fontSize: 15,
+			margin: '5 0',
 			width: 100
 		}
 	};
@@ -138,15 +142,15 @@ export class SpineConfig implements ISpineConfig {
 	public playButton: IStyle = {
 		id: 'Play_',
 		textContent: 'Play',
-		fontSize: 30,
-		margin: '10 0 30 0'
+		fontSize: 15,
+		margin: '5 0 30 0'
 	};
 
 	public addButton: IStyle = {
 		id: 'AddButton',
 		textContent: '+',
-		fontSize: 30,
-		margin: '10 0'
+		fontSize: 15,
+		margin: '5 0'
 	};
 
 	public uploadButtons: IUploadButtons = {
@@ -155,11 +159,11 @@ export class SpineConfig implements ISpineConfig {
 				id: 'uploadLabel_IMAGE',
 				htmlFor: 'uploadInput_IMAGE',
 				position: 'relative',
-				x: 750,
-				y: -850,
-				fontSize: 60,
+				x: 50,
+				y: 50,
+				fontSize: 15,
 				padding: '6px 12px',
-				textContent: 'Upload IMAGE : ',
+				textContent: 'Upload PNG : ',
 				display: 'inline-block'
 			},
 			input: {
@@ -167,9 +171,9 @@ export class SpineConfig implements ISpineConfig {
 				type: 'file',
 				accept: '.png',
 				position: 'relative',
-				x: 750,
-				y: -850,
-				fontSize: 60
+				x: 50,
+				y: 50,
+				fontSize: 15
 			}
 		},
 		ATLAS: {
@@ -177,9 +181,9 @@ export class SpineConfig implements ISpineConfig {
 				id: 'uploadLabel_ATLAS',
 				htmlFor: 'uploadInput_ATLAS',
 				position: 'relative',
-				x: 750,
-				y: -800,
-				fontSize: 60,
+				x: 50,
+				y: 100,
+				fontSize: 15,
 				padding: '6px 12px',
 				textContent: 'Upload ATLAS : ',
 				display: 'inline-block'
@@ -189,9 +193,9 @@ export class SpineConfig implements ISpineConfig {
 				type: 'file',
 				accept: '.atlas',
 				position: 'relative',
-				x: 750,
-				y: -800,
-				fontSize: 60
+				x: 50,
+				y: 100,
+				fontSize: 15
 			}
 		},
 		JSON: {
@@ -199,9 +203,9 @@ export class SpineConfig implements ISpineConfig {
 				id: 'uploadLabel_JSON',
 				htmlFor: 'uploadInput_JSON',
 				position: 'relative',
-				x: 750,
-				y: -750,
-				fontSize: 60,
+				x: 50,
+				y: 150,
+				fontSize: 15,
 				padding: '6px 12px',
 				textContent: 'Upload JSON : ',
 				display: 'inline-block'
@@ -211,9 +215,9 @@ export class SpineConfig implements ISpineConfig {
 				type: 'file',
 				accept: '.json',
 				position: 'relative',
-				x: 750,
-				y: -750,
-				fontSize: 60
+				x: 50,
+				y: 150,
+				fontSize: 15
 			}
 		}
 	};
@@ -223,9 +227,9 @@ export class SpineConfig implements ISpineConfig {
 		type: 'button',
 		value: 'Confirm',
 		position: 'relative',
-		x: 750,
-		y: -700,
-		fontSize: 60
+		x: 65,
+		y: 200,
+		fontSize: 15
 	};
 }
 
@@ -245,10 +249,7 @@ export interface ISpineConfig {
 	trackLabel: IStyle;
 	firstAnimationButton: IInputAnimationButton;
 	lastAnimationButton: IInputAnimationButton;
-	mixin: {
-		label: IStyle,
-		input: IStyle
-	};
+	mixin: IMixin;
 	playButton: IStyle;
 	addButton: IStyle;
 	uploadButtons: IUploadButtons;
