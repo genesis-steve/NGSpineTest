@@ -1,0 +1,41 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"lib": [
+			"es2015",
+			"es2017",
+			"dom"
+		],
+		"sourceMap": true,
+		"noImplicitThis": true,
+		"module": "commonjs",
+		"allowJs": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"noUnusedLocals": false,
+		"baseUrl": "./",
+		"paths": {
+			"ngui/*": [
+				"ngui/*"
+			],
+			"slotngf/*": [
+				"slotngf/*"
+			],
+			"corengf/*": [
+				"slotngf/corengf/*"
+			]
+		}
+	},
+	"exclude": [
+		"node_modules",
+		"bin",
+		"dist"
+	],
+	"types": [
+		"pixi.js",
+		"tween.js",
+		"pixi-spine",
+		"currency-formatter",
+		"node-polyglot"
+	]
+}
