@@ -1,10 +1,9 @@
 import * as MiniSignal from 'mini-signals';
 import { IResourceDictionary, Loader, LoaderResource } from 'pixi.js';
 import { TSMap } from 'typescript-map';
-import { IStyle, IUploadPage } from 'src/config/SpineConfig';
-import { HTMLElementType } from 'src/main';
+import { IUploadPage } from 'src/config/SpineConfig';
 import { AtlasParser } from 'src/utils/AtlasParser';
-import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
+import { HTMLElementCreator, HTMLElementType, IStyle } from 'src/utils/HTMLElementCreator';
 
 export class UploadPage {
 

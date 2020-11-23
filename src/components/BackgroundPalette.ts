@@ -1,7 +1,6 @@
 import * as MiniSignal from 'mini-signals';
 import { IBackgroundPalette } from 'src/config/SpineConfig';
-import { HTMLElementType } from 'src/main';
-import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
+import { HTMLElementCreator, HTMLElementType } from 'src/utils/HTMLElementCreator';
 
 
 export class BackgroundPalette {

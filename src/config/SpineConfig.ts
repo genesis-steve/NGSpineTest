@@ -1,4 +1,5 @@
 import { MainConfig } from 'src/config/MainConfig';
+import { IStyle } from 'src/utils/HTMLElementCreator';
 
 export class SpineConfig implements ISpineConfig {
 	public position: IPoint;
@@ -13,7 +14,7 @@ export class SpineConfig implements ISpineConfig {
 				position: 'relative',
 				x: 50,
 				y: 50,
-				fontSize: 15,
+				fontSize: 20,
 				padding: '6px 12px',
 				textContent: 'Upload PNG : ',
 				display: 'inline-block'
@@ -25,7 +26,7 @@ export class SpineConfig implements ISpineConfig {
 				position: 'relative',
 				x: 50,
 				y: 50,
-				fontSize: 15
+				fontSize: 20
 			}
 		},
 		ATLAS: {
@@ -35,7 +36,7 @@ export class SpineConfig implements ISpineConfig {
 				position: 'relative',
 				x: 50,
 				y: 100,
-				fontSize: 15,
+				fontSize: 20,
 				padding: '6px 12px',
 				textContent: 'Upload ATLAS : ',
 				display: 'inline-block'
@@ -47,7 +48,7 @@ export class SpineConfig implements ISpineConfig {
 				position: 'relative',
 				x: 50,
 				y: 100,
-				fontSize: 15
+				fontSize: 20
 			}
 		},
 		JSON: {
@@ -57,7 +58,7 @@ export class SpineConfig implements ISpineConfig {
 				position: 'relative',
 				x: 50,
 				y: 150,
-				fontSize: 15,
+				fontSize: 20,
 				padding: '6px 12px',
 				textContent: 'Upload JSON : ',
 				display: 'inline-block'
@@ -69,7 +70,7 @@ export class SpineConfig implements ISpineConfig {
 				position: 'relative',
 				x: 50,
 				y: 150,
-				fontSize: 15
+				fontSize: 20
 			}
 		},
 		CONFIRM: {
@@ -79,7 +80,7 @@ export class SpineConfig implements ISpineConfig {
 			position: 'relative',
 			x: 65,
 			y: 200,
-			fontSize: 15
+			fontSize: 20
 		}
 	};
 
@@ -114,7 +115,7 @@ export class SpineConfig implements ISpineConfig {
 		]
 	};
 
-	public singleAnimationDemo = {
+	public singleAnimationDemo: ISingleAnimationDemo = {
 		label: {
 			id: 'singleAnimationDemoLabel',
 			textContent: 'Single Aanimation Demo',
@@ -124,6 +125,10 @@ export class SpineConfig implements ISpineConfig {
 			padding: '0 10',
 			backgroundColor: '#4A4A4A'
 		},
+		description: {
+			textContent: 'If you want to make animation looping, please toggle on the checkbox.',
+			fontSize: 20
+		},
 		buttonContainer: {
 			id: 'singleAnimationDemo',
 			position: 'relative',
@@ -132,12 +137,16 @@ export class SpineConfig implements ISpineConfig {
 			y: -this.mainConfig.height - this.backgroundPalette.container.height,
 			width: this.mainConfig.width,
 			height: this.mainConfig.height,
-			fontSize: 15,
 			margin: '0 10'
 		},
 		animationButton: {
-			fontSize: 15,
+			fontSize: 20,
 			margin: '5 0'
+		},
+		loopCheckbox: {
+			type: 'checkbox',
+			width: 15,
+			height: 15
 		}
 	};
 
@@ -236,10 +245,39 @@ export interface ISpineConfig {
 	animationMixer: IAnimationMixer;
 }
 
+export interface IPoint {
+	x: number;
+	y: number;
+}
+
+export interface IUploadPage {
+	IMAGE: {
+		label: IStyle;
+		input: IStyle;
+	};
+	ATLAS: {
+		label: IStyle;
+		input: IStyle;
+	};
+	JSON: {
+		label: IStyle;
+		input: IStyle;
+	};
+	CONFIRM: IStyle;
+}
+
 export interface IBackgroundPalette {
 	container: IStyle;
 	button: IStyle;
 	colorList: Array<string>;
+}
+
+export interface ISingleAnimationDemo {
+	label: IStyle;
+	description: IStyle;
+	buttonContainer: IStyle;
+	animationButton: IStyle;
+	loopCheckbox: IStyle;
 }
 
 export interface IAnimationMixer {
@@ -260,62 +298,6 @@ export interface ITrack {
 	firstAnimationButton: IInputAnimationButton;
 	lastAnimationButton: IInputAnimationButton;
 	mixin: IMixin;
-}
-
-export interface IUploadPage {
-	IMAGE: {
-		label: IStyle;
-		input: IStyle;
-	};
-	ATLAS: {
-		label: IStyle;
-		input: IStyle;
-	};
-	JSON: {
-		label: IStyle;
-		input: IStyle;
-	};
-	CONFIRM: IStyle;
-}
-
-export interface ISingleAnimationDemo {
-	label: IStyle;
-	buttonContainer: IStyle;
-	animationButton: IStyle;
-}
-
-export interface IPoint {
-	x: number;
-	y: number;
-}
-
-export interface IStyle {
-	id?: string;
-	margin?: string;
-	padding?: string;
-	position?: string;
-	overflow?: string;
-	x?: number;
-	y?: number;
-	width?: number;
-	height?: number;
-	fontSize?: number;
-	fontWeight?: string;
-	color?: string;
-	backgroundColor?: string;
-	textContent?: string;
-	display?: string;
-	value?: string;
-	cursor?: string;
-	border?: string;
-	boxShadow?: string;
-
-	/** label */
-	htmlFor?: string;
-
-	/** input */
-	type?: string;
-	accept?: string;
 }
 
 export interface IInputAnimationButton {
