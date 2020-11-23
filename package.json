@@ -4,7 +4,8 @@
 	"description": "NGSpineTest",
 	"main": "src/main.ts",
 	"scripts": {
-		"start": "webpack-dev-server --open --config ./config/webpack.dev.ts"
+		"start": "webpack-dev-server --open --config ./config/webpack.dev.ts",
+		"release-testing": "ts-node node_modules/webpack/bin/webpack.js --config ./config/webpack.common.ts --progress --profile --colors"
 	},
 	"repository": {
 		"type": "git",
@@ -17,6 +18,7 @@
 	},
 	"homepage": "https://github.com/genesis-steve/NGSpineTest#readme",
 	"dependencies": {
+		"mini-signals": "^1.2.0",
 		"pixi-spine": "^2.0.5",
 		"pixi.js": "^5.3.3",
 		"typescript": "^4.0.3",
