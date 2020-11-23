@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 window.PIXI = PIXI;
 import 'pixi-spine';
 import { Application, spine, IResourceDictionary } from 'pixi.js';
-import { ISpineConfig, SpineConfig } from 'src/config/SpineConfig';
+import { IPoint, ISpineConfig, SpineConfig } from 'src/config/SpineConfig';
 import { IMainConfig, MainConfig } from 'src/config/MainConfig';
 import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
 import { UploadPage } from 'src/components/UploadPage';
@@ -26,6 +26,8 @@ export class GmaeApplication {
 	protected uploadPage: HTMLDivElement;
 	protected singleAnimationDemo: HTMLDivElement;
 	protected animationMixer: HTMLDivElement;
+
+	protected isDrag: boolean = false;
 
 	constructor () {
 		this.appConfig = new MainConfig();
@@ -51,14 +53,45 @@ export class GmaeApplication {
 
 	protected onUploadComplete ( data: { res: IResourceDictionary, assetName: string } ): void {
 		this.mainContainer.removeChild( this.uploadPage );
+		this.setupAnimation( data );
+		this.createBackgroundPalette();
+		this.createSingleAnimationDemo();
+		this.createAnimationMixer();
+	}
+
+	protected setupAnimation ( data: { res: IResourceDictionary, assetName: string } ): void {
 		this.pixi = new Application( this.appConfig );
+		this.pixi.view.style.cursor = 'grab';
 		this.animation = new spine.Spine( data.res[ data.assetName + '.json' ].spineData );
 		this.animation.scale.set( 0.5, 0.5 )
 		this.animation.renderable = false;
 		this.pixi.stage.addChild( this.animation );
-		this.createBackgroundPalette();
-		this.createSingleAnimationDemo();
-		this.createAnimationMixer();
+		this.setDragAnimation();
+	}
+
+	protected setDragAnimation (): void {
+		let dragStart: IPoint = { x: 0, y: 0 };
+		this.pixi.view.onpointerdown = ( event ) => {
+			this.isDrag = true;
+			dragStart = { x: event.clientX, y: event.clientY };
+		};
+		this.pixi.view.onpointermove = ( event ) => {
+			if ( this.isDrag ) {
+				this.pixi.view.style.cursor = 'grabbing';
+				const offsetX: number = event.clientX - dragStart.x;
+				const offsetY: number = event.clientY - dragStart.y;
+				this.animation.position.set( this.animation.position.x + offsetX, this.animation.position.y + offsetY );
+				dragStart = { x: event.clientX, y: event.clientY };
+			}
+		};
+		this.pixi.view.onpointerup = () => {
+			this.pixi.view.style.cursor = 'grab';
+			this.isDrag = false;
+		};
+		this.pixi.view.onpointerout = () => {
+			this.pixi.view.style.cursor = 'grab';
+			this.isDrag = false;
+		};
 	}
 
 	protected onPixiColorUpdate ( color: number ): void {
