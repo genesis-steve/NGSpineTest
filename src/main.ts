@@ -4,7 +4,7 @@ import 'pixi-spine';
 import { Application, spine, IResourceDictionary } from 'pixi.js';
 import { IPoint, ISpineConfig, SpineConfig } from 'src/config/SpineConfig';
 import { IMainConfig, MainConfig } from 'src/config/MainConfig';
-import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
+import { HTMLElementCreator, HTMLElementType } from 'src/utils/HTMLElementCreator';
 import { UploadPage } from 'src/components/UploadPage';
 import { BackgroundPalette } from 'src/components/BackgroundPalette';
 import { SingleAnimationDemo } from 'src/components/SingleAnimationDemo';
@@ -98,9 +98,9 @@ export class GmaeApplication {
 		this.pixi.renderer.backgroundColor = color;
 	}
 
-	protected onSingleAnimationPlay ( animationName: string ): void {
+	protected onSingleAnimationPlay ( animationName: string, isLoop?: boolean ): void {
 		this.animation.renderable = true;
-		this.animation.state.setAnimation( 0, animationName, false );
+		this.animation.state.setAnimation( 0, animationName, isLoop );
 	}
 
 	protected onAnimationMixSet ( animationName: string ): void {
@@ -137,14 +137,4 @@ export enum EventType {
 export interface IPostMessage {
 	type: string;
 	data: any;
-}
-
-export enum HTMLElementType {
-	DIV = 'div',
-	BUTTON = 'button',
-	LABEL = 'label',
-	INPUT = 'input',
-	BR = 'br',
-	HR = 'hr',
-	P = 'p'
 }

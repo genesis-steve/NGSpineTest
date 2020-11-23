@@ -2,8 +2,7 @@ import * as MiniSignal from 'mini-signals';
 import { Inject } from 'typescript-ioc';
 import { spine } from 'pixi.js';
 import { ISingleAnimationDemo } from 'src/config/SpineConfig';
-import { HTMLElementType } from 'src/main';
-import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
+import { HTMLElementCreator, HTMLElementType } from 'src/utils/HTMLElementCreator';
 import { SpineDataModel } from 'src/core/SpineDataModel';
 
 
@@ -24,19 +23,24 @@ export class SingleAnimationDemo {
 		);
 		container.appendChild( label );
 		container.appendChild( HTMLElementCreator.createHTMLElement( HTMLElementType.BR ) );
+		container.appendChild( HTMLElementCreator.createHTMLElement( HTMLElementType.P, config.description ) );
 
-		animations.forEach( animation => {
-			const button: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.animationButton );
-			button.id = animation.name + '_Btn';
-			button.textContent = animation.name;
-			button.onclick = () => {
+		animations.forEach( ( animation, i ) => {
+			const animationButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.animationButton );
+			animationButton.id = animation.name + '_Btn';
+			animationButton.textContent = animation.name;
+			const loopCheckBox: HTMLInputElement = HTMLElementCreator.createHTMLElement<HTMLInputElement>( HTMLElementType.INPUT, {
+				type: 'checkbox',
+			} );
+			animationButton.onclick = () => {
 				if ( this.spineDataModel.waitInputData.isWaiting ) {
 					this.onAnimationMixSetSignal.dispatch( animation.name );
 				} else {
-					this.onSingleAnimationPlaySignal.dispatch( animation.name );
+					this.onSingleAnimationPlaySignal.dispatch( animation.name, loopCheckBox.checked );
 				}
 			};
-			container.appendChild( button );
+			container.appendChild( animationButton );
+			container.appendChild( loopCheckBox );
 			container.appendChild( document.createElement( HTMLElementType.BR ) );
 		} );
 		return container;

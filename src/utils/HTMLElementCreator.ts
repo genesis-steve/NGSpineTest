@@ -1,6 +1,3 @@
-import { IStyle } from "src/config/SpineConfig";
-import { HTMLElementType } from "src/main";
-
 export class HTMLElementCreator {
 
 	public static createHTMLElement<T extends HTMLElement> ( type: string, config?: IStyle ): T {
@@ -82,4 +79,43 @@ export class HTMLElementCreator {
 		}
 		return element;
 	}
+}
+
+export enum HTMLElementType {
+	DIV = 'div',
+	BUTTON = 'button',
+	LABEL = 'label',
+	INPUT = 'input',
+	BR = 'br',
+	HR = 'hr',
+	P = 'p'
+}
+
+export interface IStyle {
+	id?: string;
+	margin?: string;
+	padding?: string;
+	position?: string;
+	overflow?: string;
+	x?: number;
+	y?: number;
+	width?: number;
+	height?: number;
+	fontSize?: number;
+	fontWeight?: string;
+	color?: string;
+	backgroundColor?: string;
+	textContent?: string;
+	display?: string;
+	value?: string;
+	cursor?: string;
+	border?: string;
+	boxShadow?: string;
+
+	/** label */
+	htmlFor?: string;
+
+	/** input */
+	type?: string;
+	accept?: string;
 }

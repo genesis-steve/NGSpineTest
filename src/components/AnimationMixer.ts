@@ -1,8 +1,7 @@
 import { TSMap } from 'typescript-map';
 import { spine } from 'pixi.js';
-import { IAnimationMixer, IInputAnimationButton, IMixin, IStyle } from 'src/config/SpineConfig';
-import { HTMLElementType } from 'src/main';
-import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
+import { IAnimationMixer, IInputAnimationButton, IMixin } from 'src/config/SpineConfig';
+import { HTMLElementCreator, HTMLElementType, IStyle } from 'src/utils/HTMLElementCreator';
 import { SpineDataModel } from 'src/core/SpineDataModel';
 
 
