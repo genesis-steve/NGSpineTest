@@ -29,9 +29,7 @@ export class SingleAnimationDemo {
 			const animationButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.animationButton );
 			animationButton.id = animation.name + '_Btn';
 			animationButton.textContent = animation.name;
-			const loopCheckBox: HTMLInputElement = HTMLElementCreator.createHTMLElement<HTMLInputElement>( HTMLElementType.INPUT, {
-				type: 'checkbox',
-			} );
+			const loopCheckBox: HTMLInputElement = HTMLElementCreator.createHTMLElement<HTMLInputElement>( HTMLElementType.INPUT, config.loopCheckbox );
 			animationButton.onclick = () => {
 				if ( this.spineDataModel.waitInputData.isWaiting ) {
 					this.onAnimationMixSetSignal.dispatch( animation.name );

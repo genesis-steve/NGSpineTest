@@ -142,6 +142,11 @@ export class SpineConfig implements ISpineConfig {
 		animationButton: {
 			fontSize: 20,
 			margin: '5 0'
+		},
+		loopCheckbox: {
+			type: 'checkbox',
+			width: 15,
+			height: 15
 		}
 	};
 
@@ -272,6 +277,7 @@ export interface ISingleAnimationDemo {
 	description: IStyle;
 	buttonContainer: IStyle;
 	animationButton: IStyle;
+	loopCheckbox: IStyle;
 }
 
 export interface IAnimationMixer {
