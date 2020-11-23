@@ -57,6 +57,10 @@ export class SpineConfig implements ISpineConfig {
 			height: this.mainConfig.height,
 			fontSize: 15,
 			margin: '0 10'
+		},
+		animationButton: {
+			fontSize: 15,
+			margin: '5 0'
 		}
 	};
 
@@ -70,11 +74,6 @@ export class SpineConfig implements ISpineConfig {
 		height: this.mainConfig.height,
 		fontSize: 15,
 		margin: '0 20'
-	};
-
-	public animationButton: IStyle = {
-		fontSize: 15,
-		margin: '5 0'
 	};
 
 	public mixGroup: IStyle = {
@@ -237,12 +236,8 @@ export interface ISpineConfig {
 	backgroundPaletteColorList: Array<string>;
 	backgroundPaletteButton: IStyle;
 	backgroundPalette: IStyle;
-	singleAnimationDemo: {
-		label: IStyle,
-		buttonContainer: IStyle
-	};
+	singleAnimationDemo: ISingleAnimationDemo;
 	animationMixer: IStyle;
-	animationButton: IStyle;
 	mixGroup: IStyle;
 	track: IStyle;
 	trackLabel: IStyle;
@@ -268,6 +263,12 @@ export interface IUploadButtons {
 		input: IStyle;
 	};
 	CONFIRM: IStyle;
+}
+
+export interface ISingleAnimationDemo {
+	label: IStyle;
+	buttonContainer: IStyle;
+	animationButton: IStyle;
 }
 
 export interface IPoint {

@@ -8,6 +8,7 @@ import { IMainConfig, MainConfig } from 'src/config/MainConfig';
 import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
 import { UploadPage } from 'src/components/UploadPage';
 import { BackgroundPalette } from 'src/components/BackgroundPalette';
+import { SingleAnimationDemo } from 'src/components/SingleAnimationDemo';
 
 window.onload = () => {
 	new GmaeApplication();
@@ -55,6 +56,7 @@ export class GmaeApplication {
 	protected addListeners (): void {
 		UploadPage.onCompleteSignal.add( this.onUploadComplete, this );
 		BackgroundPalette.onPixiColorUpdateSignal.add( this.onPixiColorUpdate, this );
+		SingleAnimationDemo.onAnimationButtonClickSignal.add( this.onAnimationButtonClick, this );
 	}
 
 	protected onUploadComplete ( data: { res: IResourceDictionary, assetName: string } ): void {
@@ -74,6 +76,24 @@ export class GmaeApplication {
 		this.pixi.renderer.backgroundColor = color;
 	}
 
+	protected onAnimationButtonClick ( animationName: string ): void {
+		if ( this.waitInputData.isWaiting ) {
+			window.postMessage( {
+				type: EventType.SET_ANIMATION_MIX,
+				data: {
+					animationName: animationName
+				}
+			}, '*' );
+		} else {
+			window.postMessage( {
+				type: EventType.PLAY_ANIMATION,
+				data: {
+					animationName: animationName
+				}
+			}, '*' );
+		}
+	}
+
 	protected createUploadPage (): void {
 		this.uploadContainer = UploadPage.init( this.spineConfig.uploadButtons );
 		this.mainContainer.appendChild( this.uploadContainer );
@@ -88,42 +108,8 @@ export class GmaeApplication {
 	}
 
 	protected createSingleAnimationDemo (): void {
-		this.singleAnimationDemo = HTMLElementCreator.createHTMLElement<HTMLDivElement>(
-			HTMLElementType.DIV, this.spineConfig.singleAnimationDemo.buttonContainer
-		);
+		this.singleAnimationDemo = SingleAnimationDemo.init( this.spineConfig.singleAnimationDemo, this.animation.spineData.animations );
 		this.mainContainer.appendChild( this.singleAnimationDemo );
-
-		const label: HTMLParagraphElement = HTMLElementCreator.createHTMLElement<HTMLParagraphElement>(
-			HTMLElementType.LABEL, this.spineConfig.singleAnimationDemo.label
-		);
-		this.singleAnimationDemo.appendChild( label );
-		this.singleAnimationDemo.appendChild( HTMLElementCreator.createHTMLElement( HTMLElementType.BR ) );
-
-		this.animation.spineData.animations.forEach( animation => {
-			const config: IStyle = this.spineConfig.animationButton;
-			const button: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config );
-			button.id = animation.name + '_Btn';
-			button.textContent = animation.name;
-			button.onclick = () => {
-				if ( this.waitInputData.isWaiting ) {
-					window.postMessage( {
-						type: EventType.SET_ANIMATION_MIX,
-						data: {
-							animationName: animation.name
-						}
-					}, '*' );
-				} else {
-					window.postMessage( {
-						type: EventType.PLAY_ANIMATION,
-						data: {
-							animationName: animation.name
-						}
-					}, '*' );
-				}
-			};
-			this.singleAnimationDemo.appendChild( button );
-			this.singleAnimationDemo.appendChild( document.createElement( HTMLElementType.BR ) );
-		} );
 	}
 
 	protected createAnimationMixer (): void {
