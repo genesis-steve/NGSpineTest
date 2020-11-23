@@ -7,6 +7,7 @@ import { IInputAnimationButton, IMixin, ISpineConfig, IStyle, SpineConfig } from
 import { IMainConfig, MainConfig } from 'src/config/MainConfig';
 import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
 import { UploadPage } from 'src/components/UploadPage';
+import { BackgroundPalette } from 'src/components/BackgroundPalette';
 
 window.onload = () => {
 	new GmaeApplication();
@@ -45,11 +46,15 @@ export class GmaeApplication {
 
 	protected createElements (): void {
 		this.spineConfig = new SpineConfig();
+		this.addListeners();
 		this.mainContainer = <HTMLDivElement> document.getElementById( 'mainContainer' );
 		this.mainContainer.appendChild( HTMLElementCreator.createHTMLElement( HTMLElementType.BR ) );
+		this.createUploadPage();
+	}
+
+	protected addListeners (): void {
 		UploadPage.onCompleteSignal.add( this.onUploadComplete, this );
-		this.uploadContainer = UploadPage.init( this.spineConfig.uploadButtons );
-		this.mainContainer.appendChild( this.uploadContainer );
+		BackgroundPalette.onPixiColorUpdateSignal.add( this.onPixiColorUpdate, this );
 	}
 
 	protected onUploadComplete ( data: { res: IResourceDictionary, assetName: string } ): void {
@@ -65,22 +70,21 @@ export class GmaeApplication {
 		this.addEventListener();
 	}
 
+	protected onPixiColorUpdate ( color: number ): void {
+		this.pixi.renderer.backgroundColor = color;
+	}
+
+	protected createUploadPage (): void {
+		this.uploadContainer = UploadPage.init( this.spineConfig.uploadButtons );
+		this.mainContainer.appendChild( this.uploadContainer );
+	}
+
 	protected createBackgroundPalette (): void {
-		const palette: HTMLDivElement = HTMLElementCreator.createHTMLElement(
-			HTMLElementType.DIV, this.spineConfig.backgroundPalette
-		);
-		this.mainContainer.appendChild( palette );
-		this.spineConfig.backgroundPaletteColorList.forEach( color => {
-			const paletteButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement(
-				HTMLElementType.BUTTON, {
-				...this.spineConfig.backgroundPaletteButton,
-				backgroundColor: color
-			} );
-			paletteButton.onclick = () => {
-				this.pixi.renderer.backgroundColor = +color.replace( '#', '0x' );
-			};
-			palette.appendChild( paletteButton );
-		} );
+		this.mainContainer.appendChild( BackgroundPalette.init(
+			this.spineConfig.backgroundPalette,
+			this.spineConfig.backgroundPaletteButton,
+			this.spineConfig.backgroundPaletteColorList
+		) );
 	}
 
 	protected createSingleAnimationDemo (): void {
