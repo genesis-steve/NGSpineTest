@@ -2,7 +2,7 @@ import * as MiniSignal from 'mini-signals';
 import { IResourceDictionary, Loader, LoaderResource } from 'pixi.js';
 import { TSMap } from 'typescript-map';
 import { IStyle, IUploadPage } from 'src/config/SpineConfig';
-import { HTMLElementType, LoadExtension } from 'src/main';
+import { HTMLElementType } from 'src/main';
 import { AtlasParser } from 'src/utils/AtlasParser';
 import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
 
@@ -107,4 +107,10 @@ export class UploadPage {
 		this.loader.load();
 	}
 
+}
+
+export enum LoadExtension {
+	PNG = 'png',
+	ATLAS = 'altas',
+	JSON = 'json'
 }
