@@ -219,17 +219,16 @@ export class SpineConfig implements ISpineConfig {
 				y: 150,
 				fontSize: 15
 			}
+		},
+		CONFIRM: {
+			id: 'uploadConfirmButton',
+			type: 'button',
+			value: 'Confirm',
+			position: 'relative',
+			x: 65,
+			y: 200,
+			fontSize: 15
 		}
-	};
-
-	public uploadConfirmButton: IStyle = {
-		id: 'uploadConfirmButton',
-		type: 'button',
-		value: 'Confirm',
-		position: 'relative',
-		x: 65,
-		y: 200,
-		fontSize: 15
 	};
 }
 
@@ -253,7 +252,6 @@ export interface ISpineConfig {
 	playButton: IStyle;
 	addButton: IStyle;
 	uploadButtons: IUploadButtons;
-	uploadConfirmButton: IStyle;
 }
 
 export interface IUploadButtons {
@@ -269,6 +267,7 @@ export interface IUploadButtons {
 		label: IStyle;
 		input: IStyle;
 	};
+	CONFIRM: IStyle;
 }
 
 export interface IPoint {
