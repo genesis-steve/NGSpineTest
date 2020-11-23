@@ -100,11 +100,7 @@ export class GmaeApplication {
 	}
 
 	protected createBackgroundPalette (): void {
-		this.mainContainer.appendChild( BackgroundPalette.init(
-			this.spineConfig.backgroundPalette,
-			this.spineConfig.backgroundPaletteButton,
-			this.spineConfig.backgroundPaletteColorList
-		) );
+		this.mainContainer.appendChild( BackgroundPalette.init( this.spineConfig.backgroundPalette ) );
 	}
 
 	protected createSingleAnimationDemo (): void {
@@ -113,7 +109,7 @@ export class GmaeApplication {
 	}
 
 	protected createAnimationMixer (): void {
-		this.animationMixer = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, this.spineConfig.animationMixer );
+		this.animationMixer = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, this.spineConfig.animationMixer.container );
 		this.mainContainer.appendChild( this.animationMixer );
 
 		this.mixGroup = new TSMap();
@@ -122,7 +118,7 @@ export class GmaeApplication {
 	}
 
 	protected createAddMixGroupButton (): void {
-		this.addButton = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, this.spineConfig.addButton );
+		this.addButton = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, this.spineConfig.animationMixer.addButton );
 		this.addButton.onclick = () => {
 			this.createMixGroup();
 		}
@@ -131,7 +127,7 @@ export class GmaeApplication {
 
 	protected createMixGroup (): void {
 		this.animationMixer.removeChild( this.addButton );
-		const config: IStyle = this.spineConfig.mixGroup;
+		const config: IStyle = this.spineConfig.animationMixer.mixGroup.container;
 		const group: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config );
 		group.id = config.id + this.mixGroup.size();
 		this.mixGroup.set( group.id, [] );
@@ -151,7 +147,7 @@ export class GmaeApplication {
 			this.mixGroup.get( group.id ).push( {
 				firstAnimation: undefined, lastAnimation: undefined, mixinTime: 0
 			} );
-			const config: IStyle = this.spineConfig.track;
+			const config: IStyle = this.spineConfig.animationMixer.mixGroup.track.container;
 			const track: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config );
 			track.id = `${ config.id }${ this.mixGroup.size() - 1 }_${ i }`;
 			this.createTrackLabel( track, i );
@@ -163,7 +159,7 @@ export class GmaeApplication {
 	}
 
 	protected createTrackLabel ( group: HTMLDivElement, trackIndex: number ): void {
-		const config: IStyle = this.spineConfig.trackLabel;
+		const config: IStyle = this.spineConfig.animationMixer.mixGroup.track.label;
 
 		const label: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config );
 		label.id = `${ config.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
@@ -173,7 +169,7 @@ export class GmaeApplication {
 	}
 
 	protected createFirstInputButton ( group: HTMLDivElement, trackIndex: number, groupId: string ): void {
-		const config: IInputAnimationButton = this.spineConfig.firstAnimationButton;
+		const config: IInputAnimationButton = this.spineConfig.animationMixer.mixGroup.track.firstAnimationButton;
 
 		const label: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.label );
 		group.appendChild( label );
@@ -204,7 +200,7 @@ export class GmaeApplication {
 	}
 
 	protected createLastInputButton ( group: HTMLDivElement, trackIndex: number, groupId: string ): void {
-		const config: IInputAnimationButton = this.spineConfig.lastAnimationButton;
+		const config: IInputAnimationButton = this.spineConfig.animationMixer.mixGroup.track.lastAnimationButton;
 
 		const label: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.label );
 		group.appendChild( label );
@@ -234,7 +230,7 @@ export class GmaeApplication {
 	}
 
 	protected createMixinTimeInput ( group: HTMLDivElement, trackIndex: number ): void {
-		const config: IMixin = this.spineConfig.mixin;
+		const config: IMixin = this.spineConfig.animationMixer.mixGroup.track.mixin;
 
 		const label: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.label );
 		label.id = `${ config.label.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
@@ -247,7 +243,7 @@ export class GmaeApplication {
 	}
 
 	protected createPlayInput ( group: HTMLDivElement ): void {
-		const config: IStyle = this.spineConfig.playButton;
+		const config: IStyle = this.spineConfig.animationMixer.playButton;
 		const button: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config );
 		const idNum: number = this.mixGroup.size() - 1;
 		button.id = config.id + idNum;
@@ -284,9 +280,9 @@ export class GmaeApplication {
 					this.animation.state.setAnimation( 0, eventData.data.animationName, false );
 				} else if ( eventData.type == EventType.SET_ANIMATION_MIX ) {
 					document.getElementById( this.waitInputData.targetId ).textContent = eventData.data.animationName;
-					if ( this.waitInputData.targetId.includes( this.spineConfig.firstAnimationButton.button.id ) ) {
+					if ( this.waitInputData.targetId.includes( this.spineConfig.animationMixer.mixGroup.track.firstAnimationButton.button.id ) ) {
 						this.mixGroup.get( this.waitInputData.groupId )[ this.waitInputData.trackIndex ].firstAnimation = eventData.data.animationName;
-					} else if ( this.waitInputData.targetId.includes( this.spineConfig.lastAnimationButton.button.id ) ) {
+					} else if ( this.waitInputData.targetId.includes( this.spineConfig.animationMixer.mixGroup.track.lastAnimationButton.button.id ) ) {
 						this.mixGroup.get( this.waitInputData.groupId )[ this.waitInputData.trackIndex ].lastAnimation = eventData.data.animationName;
 					}
 					this.waitInputData.targetId = undefined;

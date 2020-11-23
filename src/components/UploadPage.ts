@@ -1,7 +1,7 @@
 import * as MiniSignal from 'mini-signals';
 import { IResourceDictionary, Loader, LoaderResource } from 'pixi.js';
 import { TSMap } from 'typescript-map';
-import { IStyle, IUploadButtons } from 'src/config/SpineConfig';
+import { IStyle, IUploadPage } from 'src/config/SpineConfig';
 import { HTMLElementType, LoadExtension } from 'src/main';
 import { AtlasParser } from 'src/utils/AtlasParser';
 import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
@@ -16,7 +16,7 @@ export class UploadPage {
 
 	public static onCompleteSignal: MiniSignal = new MiniSignal();
 
-	public static init ( config: IUploadButtons ): HTMLDivElement {
+	public static init ( config: IUploadPage ): HTMLDivElement {
 		const uploadContainer: HTMLDivElement = HTMLElementCreator.createHTMLElement( HTMLElementType.DIV );
 		this.createUploadButton( uploadContainer, LoadExtension.PNG, config.IMAGE );
 		this.createUploadButton( uploadContainer, LoadExtension.ATLAS, config.ATLAS );

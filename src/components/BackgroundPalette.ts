@@ -1,5 +1,5 @@
 import * as MiniSignal from 'mini-signals';
-import { IStyle } from 'src/config/SpineConfig';
+import { IBackgroundPalette } from 'src/config/SpineConfig';
 import { HTMLElementType } from 'src/main';
 import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
 
@@ -7,14 +7,14 @@ import { HTMLElementCreator } from 'src/utils/HTMLElementCreator';
 export class BackgroundPalette {
 	public static onPixiColorUpdateSignal: MiniSignal = new MiniSignal();
 
-	public static init ( config: IStyle, buttonConfig: IStyle, colorList: string[] ): HTMLDivElement {
+	public static init ( config: IBackgroundPalette ): HTMLDivElement {
 		const palette: HTMLDivElement = HTMLElementCreator.createHTMLElement(
-			HTMLElementType.DIV, config
+			HTMLElementType.DIV, config.container
 		);
-		colorList.forEach( color => {
+		config.colorList.forEach( color => {
 			const paletteButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement(
 				HTMLElementType.BUTTON, {
-				...buttonConfig,
+				...config.button,
 				backgroundColor: color
 			} );
 			paletteButton.onclick = () => {

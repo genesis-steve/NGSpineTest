@@ -5,154 +5,7 @@ export class SpineConfig implements ISpineConfig {
 
 	protected mainConfig = new MainConfig;
 
-	public backgroundPalette: IStyle = {
-		id: 'backgroundPalette',
-		position: 'relative',
-		x: this.mainConfig.width,
-		y: -this.mainConfig.height,
-		width: 50,
-		height: this.mainConfig.height,
-		backgroundColor: '#E0E0E0'
-	};
-
-	public backgroundPaletteColorList: Array<string> = [
-		'#000000',	// black
-		'#D5DBDB',	// gray
-		'#FFFFFF',	// white
-		'#F2D7D5',	// red
-		'#D7BDE2',	// purple
-		'#A9CCE3',	// blue
-		'#A3E4D7',	// green blue
-		'#A9DFBF',	// green
-		'#F9E79F ',	// yellow
-		'#F5CBA7 ',	// orange
-	];
-
-
-	public backgroundPaletteButton: IStyle = {
-		id: 'backgroundPaletteButton_',
-		position: 'relative',
-		width: 50,
-		height: 50,
-		backgroundColor: 'red'
-	};
-
-	public singleAnimationDemo = {
-		label: {
-			id: 'singleAnimationDemoLabel',
-			textContent: 'Single Aanimation Demo',
-			fontSize: 30,
-			fontWeight: 'bold',
-			color: '#FFFFFF',
-			padding: '0 10',
-			backgroundColor: '#4A4A4A'
-		},
-		buttonContainer: {
-			id: 'singleAnimationDemo',
-			position: 'relative',
-			overflow: 'auto',
-			x: this.mainConfig.width + this.backgroundPalette.width,
-			y: -this.mainConfig.height - this.backgroundPalette.height,
-			width: this.mainConfig.width,
-			height: this.mainConfig.height,
-			fontSize: 15,
-			margin: '0 10'
-		},
-		animationButton: {
-			fontSize: 15,
-			margin: '5 0'
-		}
-	};
-
-	public animationMixer: IStyle = {
-		id: 'animationMixer',
-		position: 'relative',
-		overflow: 'auto',
-		x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width,
-		y: this.singleAnimationDemo.buttonContainer.y - this.singleAnimationDemo.buttonContainer.height,
-		width: 400,
-		height: this.mainConfig.height,
-		fontSize: 15,
-		margin: '0 20'
-	};
-
-	public mixGroup: IStyle = {
-		id: 'MixGroup_'
-	};
-
-	public track: IStyle = {
-		id: 'TrackGroup_',
-		margin: '20 0'
-	};
-
-	public trackLabel: IStyle = {
-		id: 'TrackLabel_',
-		textContent: 'Track ',
-		backgroundColor: '#A2E9FF'
-	};
-
-	public firstAnimationButton: IInputAnimationButton = {
-		label: {
-			id: 'FirstAnimLabel_',
-			textContent: 'First Animation : ',
-			fontSize: 15,
-			margin: '5 0'
-		},
-		button: {
-			id: 'FirstAnimBtn_',
-			textContent: '...',
-			fontSize: 15,
-			margin: '5 0'
-		}
-	};
-
-	public lastAnimationButton: IInputAnimationButton = {
-		label: {
-			id: 'LastAnimLabel_',
-			textContent: 'Last Animation : ',
-			fontSize: 15,
-			margin: '5 0'
-		},
-		button: {
-			id: 'LastAnimBtn_',
-			textContent: '...',
-			fontSize: 15,
-			margin: '5 0'
-		}
-	};
-
-	public mixin: IMixin = {
-		label: {
-			id: 'MixinLabel_',
-			textContent: 'Set Mix Time (ms) : ',
-			fontSize: 15,
-			margin: '5 0'
-		},
-		input: {
-			id: 'Input_',
-			type: 'text',
-			value: '0',
-			fontSize: 15,
-			margin: '5 0',
-			width: 100
-		}
-	};
-
-	public playButton: IStyle = {
-		id: 'Play_',
-		textContent: 'Play',
-		fontSize: 15,
-		margin: '5 0 30 0'
-	};
-
-	public addButton: IStyle = {
-		id: 'AddButton',
-		textContent: '+',
-		fontSize: 15,
-		margin: '5 0'
-	};
-
-	public uploadButtons: IUploadButtons = {
+	public uploadPage: IUploadPage = {
 		IMAGE: {
 			label: {
 				id: 'uploadLabel_IMAGE',
@@ -229,27 +82,187 @@ export class SpineConfig implements ISpineConfig {
 			fontSize: 15
 		}
 	};
+
+	public backgroundPalette: IBackgroundPalette = {
+		container: {
+			id: 'backgroundPalette',
+			position: 'relative',
+			x: this.mainConfig.width,
+			y: -this.mainConfig.height,
+			width: 50,
+			height: this.mainConfig.height,
+			backgroundColor: '#E0E0E0'
+		},
+		button: {
+			id: 'backgroundPaletteButton_',
+			position: 'relative',
+			width: 50,
+			height: 50,
+			backgroundColor: 'red'
+		},
+		colorList: [
+			'#000000',	// black
+			'#D5DBDB',	// gray
+			'#FFFFFF',	// white
+			'#F2D7D5',	// red
+			'#D7BDE2',	// purple
+			'#A9CCE3',	// blue
+			'#A3E4D7',	// green blue
+			'#A9DFBF',	// green
+			'#F9E79F ',	// yellow
+			'#F5CBA7 ',	// orange
+		]
+	};
+
+	public singleAnimationDemo = {
+		label: {
+			id: 'singleAnimationDemoLabel',
+			textContent: 'Single Aanimation Demo',
+			fontSize: 30,
+			fontWeight: 'bold',
+			color: '#FFFFFF',
+			padding: '0 10',
+			backgroundColor: '#4A4A4A'
+		},
+		buttonContainer: {
+			id: 'singleAnimationDemo',
+			position: 'relative',
+			overflow: 'auto',
+			x: this.mainConfig.width + this.backgroundPalette.container.width,
+			y: -this.mainConfig.height - this.backgroundPalette.container.height,
+			width: this.mainConfig.width,
+			height: this.mainConfig.height,
+			fontSize: 15,
+			margin: '0 10'
+		},
+		animationButton: {
+			fontSize: 15,
+			margin: '5 0'
+		}
+	};
+
+	public animationMixer: IAnimationMixer = {
+		container: {
+			id: 'animationMixer',
+			position: 'relative',
+			overflow: 'auto',
+			x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width,
+			y: this.singleAnimationDemo.buttonContainer.y - this.singleAnimationDemo.buttonContainer.height,
+			width: 400,
+			height: this.mainConfig.height,
+			fontSize: 15,
+			margin: '0 20'
+		},
+		mixGroup: {
+			container: {
+				id: 'MixGroup_'
+			},
+			track: {
+				label: {
+					id: 'TrackLabel_',
+					textContent: 'Track ',
+					backgroundColor: '#A2E9FF'
+				},
+				container: {
+					id: 'TrackGroup_',
+					margin: '20 0'
+				},
+				firstAnimationButton: {
+					label: {
+						id: 'FirstAnimLabel_',
+						textContent: 'First Animation : ',
+						fontSize: 15,
+						margin: '5 0'
+					},
+					button: {
+						id: 'FirstAnimBtn_',
+						textContent: '...',
+						fontSize: 15,
+						margin: '5 0'
+					}
+				},
+				lastAnimationButton: {
+					label: {
+						id: 'LastAnimLabel_',
+						textContent: 'Last Animation : ',
+						fontSize: 15,
+						margin: '5 0'
+					},
+					button: {
+						id: 'LastAnimBtn_',
+						textContent: '...',
+						fontSize: 15,
+						margin: '5 0'
+					}
+				},
+				mixin: {
+					label: {
+						id: 'MixinLabel_',
+						textContent: 'Set Mix Time (ms) : ',
+						fontSize: 15,
+						margin: '5 0'
+					},
+					input: {
+						id: 'Input_',
+						type: 'text',
+						value: '0',
+						fontSize: 15,
+						margin: '5 0',
+						width: 100
+					}
+				}
+			}
+		},
+		playButton: {
+			id: 'Play_',
+			textContent: 'Play',
+			fontSize: 15,
+			margin: '5 0 30 0'
+		},
+		addButton: {
+			id: 'AddButton',
+			textContent: '+',
+			fontSize: 15,
+			margin: '5 0'
+		}
+	};
 }
 
 export interface ISpineConfig {
 	position: IPoint;
-	backgroundPaletteColorList: Array<string>;
-	backgroundPaletteButton: IStyle;
-	backgroundPalette: IStyle;
+	uploadPage: IUploadPage;
+	backgroundPalette: IBackgroundPalette;
 	singleAnimationDemo: ISingleAnimationDemo;
-	animationMixer: IStyle;
-	mixGroup: IStyle;
-	track: IStyle;
-	trackLabel: IStyle;
+	animationMixer: IAnimationMixer;
+}
+
+export interface IBackgroundPalette {
+	container: IStyle;
+	button: IStyle;
+	colorList: Array<string>;
+}
+
+export interface IAnimationMixer {
+	container: IStyle;
+	mixGroup: IMixGroup;
+	playButton: IStyle;
+	addButton: IStyle;
+}
+
+export interface IMixGroup {
+	container: IStyle;
+	track: ITrack;
+}
+
+export interface ITrack {
+	label: IStyle;
+	container: IStyle;
 	firstAnimationButton: IInputAnimationButton;
 	lastAnimationButton: IInputAnimationButton;
 	mixin: IMixin;
-	playButton: IStyle;
-	addButton: IStyle;
-	uploadButtons: IUploadButtons;
 }
 
-export interface IUploadButtons {
+export interface IUploadPage {
 	IMAGE: {
 		label: IStyle;
 		input: IStyle;
