@@ -17,10 +17,10 @@ export class UploadPage {
 
 	public static init ( config: IUploadPage ): HTMLDivElement {
 		const uploadContainer: HTMLDivElement = HTMLElementCreator.createHTMLElement( HTMLElementType.DIV );
-		this.createUploadButton( uploadContainer, LoadExtension.PNG, config.IMAGE );
-		this.createUploadButton( uploadContainer, LoadExtension.ATLAS, config.ATLAS );
-		this.createUploadButton( uploadContainer, LoadExtension.JSON, config.JSON );
-		this.createUploadConfirmButton( uploadContainer, config.CONFIRM );
+		this.createUploadButton( uploadContainer, LoadExtension.PNG, config.uploadImageButton );
+		this.createUploadButton( uploadContainer, LoadExtension.ATLAS, config.uploadAtlasButton );
+		this.createUploadButton( uploadContainer, LoadExtension.JSON, config.uploadJsonButton );
+		this.createUploadConfirmButton( uploadContainer, config.confirmButton );
 		return uploadContainer;
 	}
 

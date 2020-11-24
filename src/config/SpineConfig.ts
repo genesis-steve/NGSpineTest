@@ -7,7 +7,7 @@ export class SpineConfig implements ISpineConfig {
 	protected mainConfig = new MainConfig;
 
 	public uploadPage: IUploadPage = {
-		IMAGE: {
+		uploadImageButton: {
 			label: {
 				id: 'uploadLabel_IMAGE',
 				htmlFor: 'uploadInput_IMAGE',
@@ -29,7 +29,7 @@ export class SpineConfig implements ISpineConfig {
 				fontSize: 20
 			}
 		},
-		ATLAS: {
+		uploadAtlasButton: {
 			label: {
 				id: 'uploadLabel_ATLAS',
 				htmlFor: 'uploadInput_ATLAS',
@@ -51,7 +51,7 @@ export class SpineConfig implements ISpineConfig {
 				fontSize: 20
 			}
 		},
-		JSON: {
+		uploadJsonButton: {
 			label: {
 				id: 'uploadLabel_JSON',
 				htmlFor: 'uploadInput_JSON',
@@ -73,7 +73,7 @@ export class SpineConfig implements ISpineConfig {
 				fontSize: 20
 			}
 		},
-		CONFIRM: {
+		confirmButton: {
 			id: 'uploadConfirmButton',
 			type: 'button',
 			value: 'Confirm',
@@ -103,15 +103,7 @@ export class SpineConfig implements ISpineConfig {
 		},
 		colorList: [
 			'#000000',	// black
-			'#D5DBDB',	// gray
-			'#FFFFFF',	// white
-			'#F2D7D5',	// red
-			'#D7BDE2',	// purple
-			'#A9CCE3',	// blue
-			'#A3E4D7',	// green blue
-			'#A9DFBF',	// green
-			'#F9E79F ',	// yellow
-			'#F5CBA7 ',	// orange
+			'#FFFFFF'	// white
 		]
 	};
 
@@ -251,19 +243,19 @@ export interface IPoint {
 }
 
 export interface IUploadPage {
-	IMAGE: {
+	uploadImageButton: {
 		label: IStyle;
 		input: IStyle;
 	};
-	ATLAS: {
+	uploadAtlasButton: {
 		label: IStyle;
 		input: IStyle;
 	};
-	JSON: {
+	uploadJsonButton: {
 		label: IStyle;
 		input: IStyle;
 	};
-	CONFIRM: IStyle;
+	confirmButton: IStyle;
 }
 
 export interface IBackgroundPalette {
