@@ -84,12 +84,67 @@ export class SpineConfig implements ISpineConfig {
 		}
 	};
 
+	public spineSettingsPanel: ISpineSettingsPanel = {
+		title: {
+			id: 'singleAnimationDemoLabel',
+			position: 'relative',
+			textContent: 'Spine Settings',
+			fontSize: 30,
+			fontWeight: 'bold',
+			color: '#FFFFFF',
+			padding: '10 10',
+			background: ElementColor.TITLE,
+			x: 55
+		},
+		container: {
+			id: 'singleAnimationDemo',
+			position: 'relative',
+			x: 0,
+			y: 0,
+			width: this.mainConfig.width - 40,
+			height: 150,
+			boxShadow: ElementColor.INBOX_SHADOW,
+			padding: '20 20'
+		},
+		scaleSettings: {
+			container: {
+				position: 'relative',
+				x: 25,
+				y: 30
+			},
+			scaleTitle: {
+				textContent: 'Scale : ',
+				fontSize: 20,
+				margin: '0 20'
+			},
+			scaleDownButton: {
+				textContent: '◀',
+				fontSize: 20
+			},
+			scaleUpButton: {
+				textContent: '▶',
+				fontSize: 20
+			},
+			scaleAmountText: {
+				fontSize: 20,
+				margin: '0 20'
+			}
+		},
+		resetButton: {
+			position: 'relative',
+			textContent: 'Reset',
+			fontSize: 20,
+			x: 120,
+			y: 50
+		}
+	};
+
 	public backgroundPalette: IBackgroundPalette = {
 		container: {
 			id: 'backgroundPalette',
 			position: 'relative',
 			x: this.mainConfig.width,
-			y: -this.mainConfig.height,
+			y: -this.mainConfig.height - this.spineSettingsPanel.container.height - 40,
 			width: 50,
 			height: this.mainConfig.height,
 			background: 'linear-gradient(90deg, rgba(237,237,237,1) 0%, rgba(255,255,255,1) 50%, rgba(237,237,237,1) 100%)'
@@ -126,11 +181,11 @@ export class SpineConfig implements ISpineConfig {
 			position: 'relative',
 			overflow: 'auto',
 			x: this.mainConfig.width + this.backgroundPalette.container.width,
-			y: -this.mainConfig.height - this.backgroundPalette.container.height,
+			y: this.backgroundPalette.container.y - this.backgroundPalette.container.height,
 			width: this.mainConfig.width,
 			height: this.mainConfig.height,
 			padding: '0 10',
-			boxShadow: 'inset 0px 0px 12px -2px #919191'
+			boxShadow: ElementColor.INBOX_SHADOW
 		},
 		animationButton: {
 			fontSize: 20,
@@ -143,37 +198,6 @@ export class SpineConfig implements ISpineConfig {
 		}
 	};
 
-	// public spineSettingPanel: ISpineSettingPanel = {
-	// 	label: {
-	// 		id: 'singleAnimationDemoLabel',
-	// 		textContent: 'Single Aanimation Demo',
-	// 		fontSize: 30,
-	// 		fontWeight: 'bold',
-	// 		color: '#FFFFFF',
-	// 		padding: '0 10',
-	// 		backgroundColor: '#4A4A4A'
-	// 	},
-	// 	buttonContainer: {
-	// 		id: 'singleAnimationDemo',
-	// 		position: 'relative',
-	// 		overflow: 'auto',
-	// 		x: this.mainConfig.width + this.backgroundPalette.container.width,
-	// 		y: -this.mainConfig.height - this.backgroundPalette.container.height,
-	// 		width: this.mainConfig.width,
-	// 		height: this.mainConfig.height,
-	// 		margin: '0 10'
-	// 	},
-	// 	animationButton: {
-	// 		fontSize: 20,
-	// 		margin: '5 0'
-	// 	},
-	// 	loopCheckbox: {
-	// 		type: 'checkbox',
-	// 		width: 15,
-	// 		height: 15
-	// 	}
-	// };
-
 	public animationMixer: IAnimationMixer = {
 		container: {
 			id: 'animationMixer',
@@ -185,7 +209,7 @@ export class SpineConfig implements ISpineConfig {
 			height: this.mainConfig.height,
 			fontSize: 15,
 			padding: '0 10',
-			boxShadow: 'inset 0px 0px 12px -2px #919191'
+			boxShadow: ElementColor.INBOX_SHADOW
 		},
 		mixGroup: {
 			container: {
@@ -269,6 +293,7 @@ export interface ISpineConfig {
 	position: IPoint;
 	uploadPage: IUploadPage;
 	backgroundPalette: IBackgroundPalette;
+	spineSettingsPanel: ISpineSettingsPanel;
 	singleAnimationDemo: ISingleAnimationDemo;
 	animationMixer: IAnimationMixer;
 }
@@ -298,6 +323,21 @@ export interface IBackgroundPalette {
 	container: IStyle;
 	button: IStyle;
 	colorList: Array<string>;
+}
+
+export interface ISpineSettingsPanel {
+	title: IStyle;
+	container: IStyle;
+	scaleSettings: ISpineScaleSettings;
+	resetButton: IStyle;
+}
+
+export interface ISpineScaleSettings {
+	container: IStyle;
+	scaleTitle: IStyle;
+	scaleDownButton: IStyle;
+	scaleUpButton: IStyle;
+	scaleAmountText: IStyle;
 }
 
 export interface ISingleAnimationDemo {
@@ -339,5 +379,6 @@ export interface IMixin {
 }
 
 export enum ElementColor {
-	TITLE = '#4A4A4A'
+	TITLE = '#4A4A4A',
+	INBOX_SHADOW = 'inset 0px 0px 12px -2px #919191'
 }

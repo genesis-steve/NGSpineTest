@@ -9,6 +9,7 @@ import { UploadPage } from 'src/components/UploadPage';
 import { BackgroundPalette } from 'src/components/BackgroundPalette';
 import { SingleAnimationDemo } from 'src/components/SingleAnimationDemo';
 import { AnimationMixer } from 'src/components/AnimationMixer';
+import { SpineSettingsPanel } from 'src/components/SpineSettingsPanel';
 
 window.onload = () => {
 	new GmaeApplication();
@@ -24,6 +25,8 @@ export class GmaeApplication {
 
 	protected mainContainer: HTMLDivElement;
 	protected uploadPage: HTMLDivElement;
+	protected spineSettingsPanel: HTMLDivElement;
+	protected backgroundPalette: HTMLDivElement;
 	protected singleAnimationDemo: HTMLDivElement;
 	protected animationMixer: HTMLDivElement;
 
@@ -54,6 +57,7 @@ export class GmaeApplication {
 	protected onUploadComplete ( data: { res: IResourceDictionary, assetName: string } ): void {
 		this.mainContainer.removeChild( this.uploadPage );
 		this.setupAnimation( data );
+		this.createSpineSettingsPanel();
 		this.createBackgroundPalette();
 		this.createSingleAnimationDemo();
 		this.createAnimationMixer();
@@ -112,8 +116,14 @@ export class GmaeApplication {
 		this.mainContainer.appendChild( this.uploadPage );
 	}
 
+	protected createSpineSettingsPanel (): void {
+		this.spineSettingsPanel = SpineSettingsPanel.init( this.spineConfig.spineSettingsPanel, this.animation );
+		this.mainContainer.appendChild( this.spineSettingsPanel );
+	}
+
 	protected createBackgroundPalette (): void {
-		this.mainContainer.appendChild( BackgroundPalette.init( this.spineConfig.backgroundPalette ) );
+		this.backgroundPalette = BackgroundPalette.init( this.spineConfig.backgroundPalette );
+		this.mainContainer.appendChild( this.backgroundPalette );
 	}
 
 	protected createSingleAnimationDemo (): void {
