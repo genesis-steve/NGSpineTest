@@ -69,9 +69,9 @@ export class AnimationMixer {
 	}
 
 	protected static createTrackLabel ( group: HTMLDivElement, trackIndex: number ): void {
-		const config: IStyle = this.config.mixGroup.track.label;
+		const config: IStyle = this.config.mixGroup.track.title;
 
-		const label: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config );
+		const label: HTMLParagraphElement = HTMLElementCreator.createHTMLElement<HTMLParagraphElement>( HTMLElementType.P, config );
 		label.id = `${ config.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
 		label.textContent = config.textContent + trackIndex;
 		group.appendChild( label );

@@ -14,7 +14,7 @@ export class BackgroundPalette {
 			const paletteButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement(
 				HTMLElementType.BUTTON, {
 				...config.button,
-				backgroundColor: color
+				background: color
 			} );
 			paletteButton.onclick = () => {
 				this.onPixiColorUpdateSignal.dispatch( +color.replace( '#', '0x' ) );

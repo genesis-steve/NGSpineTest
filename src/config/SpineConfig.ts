@@ -7,7 +7,7 @@ export class SpineConfig implements ISpineConfig {
 	protected mainConfig = new MainConfig;
 
 	public uploadPage: IUploadPage = {
-		IMAGE: {
+		uploadImageButton: {
 			label: {
 				id: 'uploadLabel_IMAGE',
 				htmlFor: 'uploadInput_IMAGE',
@@ -29,7 +29,7 @@ export class SpineConfig implements ISpineConfig {
 				fontSize: 20
 			}
 		},
-		ATLAS: {
+		uploadAtlasButton: {
 			label: {
 				id: 'uploadLabel_ATLAS',
 				htmlFor: 'uploadInput_ATLAS',
@@ -51,7 +51,7 @@ export class SpineConfig implements ISpineConfig {
 				fontSize: 20
 			}
 		},
-		JSON: {
+		uploadJsonButton: {
 			label: {
 				id: 'uploadLabel_JSON',
 				htmlFor: 'uploadInput_JSON',
@@ -73,7 +73,7 @@ export class SpineConfig implements ISpineConfig {
 				fontSize: 20
 			}
 		},
-		CONFIRM: {
+		confirmButton: {
 			id: 'uploadConfirmButton',
 			type: 'button',
 			value: 'Confirm',
@@ -84,46 +84,93 @@ export class SpineConfig implements ISpineConfig {
 		}
 	};
 
+	public spineSettingsPanel: ISpineSettingsPanel = {
+		title: {
+			id: 'singleAnimationDemoLabel',
+			position: 'relative',
+			textContent: 'Spine Settings',
+			fontSize: 30,
+			fontWeight: 'bold',
+			color: '#FFFFFF',
+			padding: '10 10',
+			background: ElementColor.TITLE,
+			x: 55
+		},
+		container: {
+			id: 'singleAnimationDemo',
+			position: 'relative',
+			x: 0,
+			y: 0,
+			width: this.mainConfig.width - 40,
+			height: 150,
+			boxShadow: ElementColor.INBOX_SHADOW,
+			padding: '20 20'
+		},
+		scaleSettings: {
+			container: {
+				position: 'relative',
+				x: 25,
+				y: 30
+			},
+			scaleTitle: {
+				textContent: 'Scale : ',
+				fontSize: 20,
+				margin: '0 20'
+			},
+			scaleDownButton: {
+				textContent: '◀',
+				fontSize: 20
+			},
+			scaleUpButton: {
+				textContent: '▶',
+				fontSize: 20
+			},
+			scaleAmountText: {
+				fontSize: 20,
+				margin: '0 20'
+			}
+		},
+		resetButton: {
+			position: 'relative',
+			textContent: 'Reset',
+			fontSize: 20,
+			x: 120,
+			y: 50
+		}
+	};
+
 	public backgroundPalette: IBackgroundPalette = {
 		container: {
 			id: 'backgroundPalette',
 			position: 'relative',
 			x: this.mainConfig.width,
-			y: -this.mainConfig.height,
+			y: -this.mainConfig.height - this.spineSettingsPanel.container.height - 40,
 			width: 50,
 			height: this.mainConfig.height,
-			backgroundColor: '#E0E0E0'
+			background: 'linear-gradient(90deg, rgba(237,237,237,1) 0%, rgba(255,255,255,1) 50%, rgba(237,237,237,1) 100%)'
 		},
 		button: {
 			id: 'backgroundPaletteButton_',
 			position: 'relative',
 			width: 50,
 			height: 50,
-			backgroundColor: 'red'
+			background: 'red'
 		},
 		colorList: [
 			'#000000',	// black
-			'#D5DBDB',	// gray
-			'#FFFFFF',	// white
-			'#F2D7D5',	// red
-			'#D7BDE2',	// purple
-			'#A9CCE3',	// blue
-			'#A3E4D7',	// green blue
-			'#A9DFBF',	// green
-			'#F9E79F ',	// yellow
-			'#F5CBA7 ',	// orange
+			'#FFFFFF'	// white
 		]
 	};
 
 	public singleAnimationDemo: ISingleAnimationDemo = {
-		label: {
+		title: {
 			id: 'singleAnimationDemoLabel',
 			textContent: 'Single Aanimation Demo',
 			fontSize: 30,
 			fontWeight: 'bold',
 			color: '#FFFFFF',
-			padding: '0 10',
-			backgroundColor: '#4A4A4A'
+			padding: '10 10',
+			background: ElementColor.TITLE
 		},
 		description: {
 			textContent: 'If you want to make animation looping, please toggle on the checkbox.',
@@ -134,10 +181,11 @@ export class SpineConfig implements ISpineConfig {
 			position: 'relative',
 			overflow: 'auto',
 			x: this.mainConfig.width + this.backgroundPalette.container.width,
-			y: -this.mainConfig.height - this.backgroundPalette.container.height,
+			y: this.backgroundPalette.container.y - this.backgroundPalette.container.height,
 			width: this.mainConfig.width,
 			height: this.mainConfig.height,
-			margin: '0 10'
+			padding: '0 10',
+			boxShadow: ElementColor.INBOX_SHADOW
 		},
 		animationButton: {
 			fontSize: 20,
@@ -155,26 +203,30 @@ export class SpineConfig implements ISpineConfig {
 			id: 'animationMixer',
 			position: 'relative',
 			overflow: 'auto',
-			x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width,
+			x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width + 20,
 			y: this.singleAnimationDemo.buttonContainer.y - this.singleAnimationDemo.buttonContainer.height,
 			width: 400,
 			height: this.mainConfig.height,
 			fontSize: 15,
-			margin: '0 20'
+			padding: '0 10',
+			boxShadow: ElementColor.INBOX_SHADOW
 		},
 		mixGroup: {
 			container: {
 				id: 'MixGroup_'
 			},
 			track: {
-				label: {
+				title: {
 					id: 'TrackLabel_',
 					textContent: 'Track ',
-					backgroundColor: '#A2E9FF'
+					color: '#FFFFFF',
+					background: ElementColor.TITLE,
+					fontWeight: 'Bold',
+					padding: '5 5'
 				},
 				container: {
 					id: 'TrackGroup_',
-					margin: '20 0'
+					margin: '30 0 0 0'
 				},
 				firstAnimationButton: {
 					label: {
@@ -241,6 +293,7 @@ export interface ISpineConfig {
 	position: IPoint;
 	uploadPage: IUploadPage;
 	backgroundPalette: IBackgroundPalette;
+	spineSettingsPanel: ISpineSettingsPanel;
 	singleAnimationDemo: ISingleAnimationDemo;
 	animationMixer: IAnimationMixer;
 }
@@ -251,19 +304,19 @@ export interface IPoint {
 }
 
 export interface IUploadPage {
-	IMAGE: {
+	uploadImageButton: {
 		label: IStyle;
 		input: IStyle;
 	};
-	ATLAS: {
+	uploadAtlasButton: {
 		label: IStyle;
 		input: IStyle;
 	};
-	JSON: {
+	uploadJsonButton: {
 		label: IStyle;
 		input: IStyle;
 	};
-	CONFIRM: IStyle;
+	confirmButton: IStyle;
 }
 
 export interface IBackgroundPalette {
@@ -272,8 +325,23 @@ export interface IBackgroundPalette {
 	colorList: Array<string>;
 }
 
+export interface ISpineSettingsPanel {
+	title: IStyle;
+	container: IStyle;
+	scaleSettings: ISpineScaleSettings;
+	resetButton: IStyle;
+}
+
+export interface ISpineScaleSettings {
+	container: IStyle;
+	scaleTitle: IStyle;
+	scaleDownButton: IStyle;
+	scaleUpButton: IStyle;
+	scaleAmountText: IStyle;
+}
+
 export interface ISingleAnimationDemo {
-	label: IStyle;
+	title: IStyle;
 	description: IStyle;
 	buttonContainer: IStyle;
 	animationButton: IStyle;
@@ -293,7 +361,7 @@ export interface IMixGroup {
 }
 
 export interface ITrack {
-	label: IStyle;
+	title: IStyle;
 	container: IStyle;
 	firstAnimationButton: IInputAnimationButton;
 	lastAnimationButton: IInputAnimationButton;
@@ -308,4 +376,9 @@ export interface IInputAnimationButton {
 export interface IMixin {
 	label: IStyle,
 	input: IStyle
+}
+
+export enum ElementColor {
+	TITLE = '#4A4A4A',
+	INBOX_SHADOW = 'inset 0px 0px 12px -2px #919191'
 }

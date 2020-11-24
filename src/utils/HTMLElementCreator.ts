@@ -47,8 +47,8 @@ export class HTMLElementCreator {
 		if ( config.color ) {
 			element.style.color = config.color;
 		}
-		if ( config.backgroundColor ) {
-			element.style.backgroundColor = config.backgroundColor;
+		if ( config.background ) {
+			element.style.background = config.background;
 		}
 		if ( config.display ) {
 			( element as HTMLElement as HTMLInputElement ).style.display = config.display;
@@ -88,7 +88,12 @@ export enum HTMLElementType {
 	INPUT = 'input',
 	BR = 'br',
 	HR = 'hr',
-	P = 'p'
+	P = 'p',
+	H1 = 'h1',
+	H2 = 'h2',
+	H3 = 'h3',
+	H4 = 'h4',
+	H5 = 'h5'
 }
 
 export interface IStyle {
@@ -104,7 +109,7 @@ export interface IStyle {
 	fontSize?: number;
 	fontWeight?: string;
 	color?: string;
-	backgroundColor?: string;
+	background?: string;
 	textContent?: string;
 	display?: string;
 	value?: string;

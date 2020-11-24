@@ -19,10 +19,9 @@ export class SingleAnimationDemo {
 			HTMLElementType.DIV, config.buttonContainer
 		);
 		const label: HTMLParagraphElement = HTMLElementCreator.createHTMLElement<HTMLParagraphElement>(
-			HTMLElementType.LABEL, config.label
+			HTMLElementType.P, config.title
 		);
 		container.appendChild( label );
-		container.appendChild( HTMLElementCreator.createHTMLElement( HTMLElementType.BR ) );
 		container.appendChild( HTMLElementCreator.createHTMLElement( HTMLElementType.P, config.description ) );
 
 		animations.forEach( ( animation, i ) => {
