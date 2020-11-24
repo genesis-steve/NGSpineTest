@@ -272,6 +272,11 @@ export class SpineConfig implements ISpineConfig {
 						width: 100
 					}
 				}
+			},
+			addTrackButton: {
+				id: 'AddTrackButton_',
+				fontSize: 15,
+				textContent: 'Add Track',
 			}
 		},
 		playButton: {
@@ -358,6 +363,7 @@ export interface IAnimationMixer {
 export interface IMixGroup {
 	container: IStyle;
 	track: ITrack;
+	addTrackButton: IStyle;
 }
 
 export interface ITrack {

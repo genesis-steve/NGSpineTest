@@ -38,41 +38,60 @@ export class AnimationMixer {
 	protected static createMixGroup (): void {
 		const config = this.config.mixGroup;
 		this.container.removeChild( this.addButton );
+
 		const group: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config.container );
 		group.id = config.container.id + this.mixGroup.size();
 		this.mixGroup.set( group.id, [] );
 		this.container.appendChild( group );
 
-		this.createTracks( group, 2 );
-		this.createPlayInput( group );
+		const track = this.createTrack( group );
+		group.appendChild( track );
+
+		const playButton = this.createPlayButton( group );
+		group.appendChild( playButton );
+
+		const addTrackButton = this.createAddTrackButton( group );
+		group.appendChild( addTrackButton );
 
 		const hiven: HTMLHRElement = document.createElement( HTMLElementType.HR );
 		group.appendChild( hiven );
 
-		this.container.appendChild( this.addButton );
-	}
-
-	protected static createTracks ( group: HTMLDivElement, amount: number ): void {
-		for ( let i = 0; i < amount; i++ ) {
+		addTrackButton.onclick = () => {
+			group.removeChild( playButton );
+			group.removeChild( addTrackButton );
+			group.removeChild( hiven );
+			const track = this.createTrack( group );
+			group.appendChild( track );
+			group.appendChild( playButton );
+			group.appendChild( addTrackButton );
+			group.appendChild( hiven );
 			this.mixGroup.get( group.id ).push( {
 				firstAnimation: undefined, lastAnimation: undefined, mixinTime: 0
 			} );
-			const config: IStyle = this.config.mixGroup.track.container;
-			const track: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config );
-			track.id = `${ config.id }${ this.mixGroup.size() - 1 }_${ i }`;
-			this.createTrackLabel( track, i );
-			this.createFirstInputButton( track, i, group.id );
-			this.createLastInputButton( track, i, group.id );
-			this.createMixinTimeInput( track, i );
-			group.appendChild( track );
-		}
+		};
+		this.mixGroup.get( group.id ).push( {
+			firstAnimation: undefined, lastAnimation: undefined, mixinTime: 0
+		} );
+		this.container.appendChild( this.addButton );
+	}
+
+	protected static createTrack ( group: HTMLDivElement ): HTMLDivElement {
+		const config: IStyle = this.config.mixGroup.track.container;
+		const track: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config );
+		const trackIndex: number = this.mixGroup.has( group.id ) ? this.mixGroup.get( group.id ).length : 0;
+		track.id = `${ config.id }${ this.mixGroup.size() }_${ trackIndex }`;
+		this.createTrackLabel( track, trackIndex );
+		this.createFirstInputButton( track, trackIndex, group.id );
+		this.createLastInputButton( track, trackIndex, group.id );
+		this.createMixinTimeInput( track, trackIndex );
+		return track;
 	}
 
 	protected static createTrackLabel ( group: HTMLDivElement, trackIndex: number ): void {
 		const config: IStyle = this.config.mixGroup.track.title;
 
 		const label: HTMLParagraphElement = HTMLElementCreator.createHTMLElement<HTMLParagraphElement>( HTMLElementType.P, config );
-		label.id = `${ config.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
+		label.id = `${ config.id }${ this.mixGroup.size() }_${ trackIndex }`;
 		label.textContent = config.textContent + trackIndex;
 		group.appendChild( label );
 		group.appendChild( document.createElement( HTMLElementType.BR ) );
@@ -85,7 +104,7 @@ export class AnimationMixer {
 		group.appendChild( label );
 
 		const button: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.button );
-		button.id = `${ config.button.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
+		button.id = `${ config.button.id }${ this.mixGroup.size() }_${ trackIndex }`;
 		group.appendChild( button );
 		group.appendChild( document.createElement( HTMLElementType.BR ) );
 
@@ -116,7 +135,7 @@ export class AnimationMixer {
 		group.appendChild( label );
 
 		const button: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.button );
-		button.id = `${ config.button.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
+		button.id = `${ config.button.id }${ this.mixGroup.size() }_${ trackIndex }`;
 		group.appendChild( button );
 		group.appendChild( document.createElement( HTMLElementType.BR ) );
 
@@ -143,18 +162,24 @@ export class AnimationMixer {
 		const config: IMixin = this.config.mixGroup.track.mixin;
 
 		const label: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.label );
-		label.id = `${ config.label.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
+		label.id = `${ config.label.id }${ this.mixGroup.size() }_${ trackIndex }`;
 		group.appendChild( label );
 
 		const input: HTMLInputElement = HTMLElementCreator.createHTMLElement<HTMLInputElement>( HTMLElementType.INPUT, config.input );
-		input.id = `${ config.input.id }${ this.mixGroup.size() - 1 }_${ trackIndex }`;
+		input.id = `${ config.input.id }${ this.mixGroup.size() }_${ trackIndex }`;
 		group.appendChild( input );
-		group.appendChild( document.createElement( HTMLElementType.BR ) );
 	}
 
-	protected static createPlayInput ( group: HTMLDivElement ): void {
+	protected static createAddTrackButton ( group: HTMLDivElement ): HTMLButtonElement {
+		const config = this.config.mixGroup.addTrackButton;
+		const button: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config );
+		button.id = `${ config.id }${ this.mixGroup.size() }`;
+		return button;
+	}
+
+	protected static createPlayButton ( group: HTMLDivElement ): HTMLButtonElement {
 		const config: IStyle = this.config.playButton;
-		const idNum: number = this.mixGroup.size() - 1;
+		const idNum: number = this.mixGroup.size();
 
 		const button: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config );
 		button.id = config.id + idNum;
@@ -178,8 +203,7 @@ export class AnimationMixer {
 				}
 			} );
 		};
-		group.appendChild( button );
-		group.appendChild( document.createElement( HTMLElementType.BR ) );
+		return button;
 	}
 
 	public static setAnimationMix ( animationName: string ): void {
