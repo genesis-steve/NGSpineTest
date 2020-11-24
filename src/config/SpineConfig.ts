@@ -92,14 +92,14 @@ export class SpineConfig implements ISpineConfig {
 			y: -this.mainConfig.height,
 			width: 50,
 			height: this.mainConfig.height,
-			backgroundColor: '#E0E0E0'
+			background: 'linear-gradient(90deg, rgba(237,237,237,1) 0%, rgba(255,255,255,1) 50%, rgba(237,237,237,1) 100%)'
 		},
 		button: {
 			id: 'backgroundPaletteButton_',
 			position: 'relative',
 			width: 50,
 			height: 50,
-			backgroundColor: 'red'
+			background: 'red'
 		},
 		colorList: [
 			'#000000',	// black
@@ -108,14 +108,14 @@ export class SpineConfig implements ISpineConfig {
 	};
 
 	public singleAnimationDemo: ISingleAnimationDemo = {
-		label: {
+		title: {
 			id: 'singleAnimationDemoLabel',
 			textContent: 'Single Aanimation Demo',
 			fontSize: 30,
 			fontWeight: 'bold',
 			color: '#FFFFFF',
-			padding: '0 10',
-			backgroundColor: '#4A4A4A'
+			padding: '10 10',
+			background: ElementColor.TITLE
 		},
 		description: {
 			textContent: 'If you want to make animation looping, please toggle on the checkbox.',
@@ -129,7 +129,8 @@ export class SpineConfig implements ISpineConfig {
 			y: -this.mainConfig.height - this.backgroundPalette.container.height,
 			width: this.mainConfig.width,
 			height: this.mainConfig.height,
-			margin: '0 10'
+			padding: '0 10',
+			boxShadow: 'inset 0px 0px 12px -2px #919191'
 		},
 		animationButton: {
 			fontSize: 20,
@@ -142,31 +143,66 @@ export class SpineConfig implements ISpineConfig {
 		}
 	};
 
+	// public spineSettingPanel: ISpineSettingPanel = {
+	// 	label: {
+	// 		id: 'singleAnimationDemoLabel',
+	// 		textContent: 'Single Aanimation Demo',
+	// 		fontSize: 30,
+	// 		fontWeight: 'bold',
+	// 		color: '#FFFFFF',
+	// 		padding: '0 10',
+	// 		backgroundColor: '#4A4A4A'
+	// 	},
+	// 	buttonContainer: {
+	// 		id: 'singleAnimationDemo',
+	// 		position: 'relative',
+	// 		overflow: 'auto',
+	// 		x: this.mainConfig.width + this.backgroundPalette.container.width,
+	// 		y: -this.mainConfig.height - this.backgroundPalette.container.height,
+	// 		width: this.mainConfig.width,
+	// 		height: this.mainConfig.height,
+	// 		margin: '0 10'
+	// 	},
+	// 	animationButton: {
+	// 		fontSize: 20,
+	// 		margin: '5 0'
+	// 	},
+	// 	loopCheckbox: {
+	// 		type: 'checkbox',
+	// 		width: 15,
+	// 		height: 15
+	// 	}
+	// };
+
 	public animationMixer: IAnimationMixer = {
 		container: {
 			id: 'animationMixer',
 			position: 'relative',
 			overflow: 'auto',
-			x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width,
+			x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width + 20,
 			y: this.singleAnimationDemo.buttonContainer.y - this.singleAnimationDemo.buttonContainer.height,
 			width: 400,
 			height: this.mainConfig.height,
 			fontSize: 15,
-			margin: '0 20'
+			padding: '0 10',
+			boxShadow: 'inset 0px 0px 12px -2px #919191'
 		},
 		mixGroup: {
 			container: {
 				id: 'MixGroup_'
 			},
 			track: {
-				label: {
+				title: {
 					id: 'TrackLabel_',
 					textContent: 'Track ',
-					backgroundColor: '#A2E9FF'
+					color: '#FFFFFF',
+					background: ElementColor.TITLE,
+					fontWeight: 'Bold',
+					padding: '5 5'
 				},
 				container: {
 					id: 'TrackGroup_',
-					margin: '20 0'
+					margin: '30 0 0 0'
 				},
 				firstAnimationButton: {
 					label: {
@@ -265,7 +301,7 @@ export interface IBackgroundPalette {
 }
 
 export interface ISingleAnimationDemo {
-	label: IStyle;
+	title: IStyle;
 	description: IStyle;
 	buttonContainer: IStyle;
 	animationButton: IStyle;
@@ -285,7 +321,7 @@ export interface IMixGroup {
 }
 
 export interface ITrack {
-	label: IStyle;
+	title: IStyle;
 	container: IStyle;
 	firstAnimationButton: IInputAnimationButton;
 	lastAnimationButton: IInputAnimationButton;
@@ -300,4 +336,8 @@ export interface IInputAnimationButton {
 export interface IMixin {
 	label: IStyle,
 	input: IStyle
+}
+
+export enum ElementColor {
+	TITLE = '#4A4A4A'
 }
