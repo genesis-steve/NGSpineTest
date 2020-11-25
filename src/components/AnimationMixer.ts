@@ -12,8 +12,14 @@ export class AnimationMixer {
 	protected static config: IAnimationMixer;
 
 	protected static container: HTMLDivElement;
-	protected static mixGroup: TSMap<string, Array<ITrackGroup>>;
+
 	protected static addButton: HTMLButtonElement;
+
+	protected static nextGroupTextColor: string;
+	protected static nextGroupBackgroundColor: string;
+
+	protected static mixGroup: TSMap<string, Array<ITrackGroup>>;
+	protected static colorGroup: TSMap<string, string>;
 
 	protected static animation: spine.Spine;
 
@@ -22,6 +28,7 @@ export class AnimationMixer {
 		this.animation = animation;
 		this.container = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config.container );
 		this.mixGroup = new TSMap();
+		this.colorGroup = new TSMap();
 		this.createAddMixGroupButton();
 		this.createMixGroup();
 		return this.container;
@@ -41,8 +48,9 @@ export class AnimationMixer {
 
 		const group: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config.container );
 		group.id = config.container.id + this.mixGroup.size();
-		this.mixGroup.set( group.id, [] );
 		this.container.appendChild( group );
+
+		this.addGroupColor( group.id, config.track.colorList );
 
 		const track = this.createTrack( group );
 		group.appendChild( track );
@@ -60,8 +68,10 @@ export class AnimationMixer {
 			group.removeChild( playButton );
 			group.removeChild( addTrackButton );
 			group.removeChild( hiven );
+
 			const track = this.createTrack( group );
 			group.appendChild( track );
+
 			group.appendChild( playButton );
 			group.appendChild( addTrackButton );
 			group.appendChild( hiven );
@@ -69,32 +79,41 @@ export class AnimationMixer {
 				firstAnimation: undefined, lastAnimation: undefined, mixinTime: 0
 			} );
 		};
-		this.mixGroup.get( group.id ).push( {
+		this.mixGroup.set( group.id, [ {
 			firstAnimation: undefined, lastAnimation: undefined, mixinTime: 0
-		} );
+		} ] );
 		this.container.appendChild( this.addButton );
+	}
+
+	protected static addGroupColor ( groupId: string, colorList: Array<string> ): void {
+		const backgroundColor: string = colorList[ this.mixGroup.size() % colorList.length ];
+		this.colorGroup.set( groupId, backgroundColor );
 	}
 
 	protected static createTrack ( group: HTMLDivElement ): HTMLDivElement {
 		const config: IStyle = this.config.mixGroup.track.container;
+
 		const track: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config );
 		const trackIndex: number = this.mixGroup.has( group.id ) ? this.mixGroup.get( group.id ).length : 0;
 		track.id = `${ config.id }${ this.mixGroup.size() }_${ trackIndex }`;
-		this.createTrackLabel( track, trackIndex );
+
+		const trackLabel: HTMLParagraphElement = this.createTrackLabel( group.id, trackIndex );
+		track.appendChild( trackLabel );
+		track.appendChild( document.createElement( HTMLElementType.BR ) );
+
 		this.createFirstInputButton( track, trackIndex, group.id );
 		this.createLastInputButton( track, trackIndex, group.id );
 		this.createMixinTimeInput( track, trackIndex );
 		return track;
 	}
 
-	protected static createTrackLabel ( group: HTMLDivElement, trackIndex: number ): void {
+	protected static createTrackLabel ( groupId: string, trackIndex: number ): HTMLParagraphElement {
 		const config: IStyle = this.config.mixGroup.track.title;
-
 		const label: HTMLParagraphElement = HTMLElementCreator.createHTMLElement<HTMLParagraphElement>( HTMLElementType.P, config );
 		label.id = `${ config.id }${ this.mixGroup.size() }_${ trackIndex }`;
+		label.style.background = this.colorGroup.get( groupId );
 		label.textContent = config.textContent + trackIndex;
-		group.appendChild( label );
-		group.appendChild( document.createElement( HTMLElementType.BR ) );
+		return label;
 	}
 
 	protected static createFirstInputButton ( group: HTMLDivElement, trackIndex: number, groupId: string ): void {

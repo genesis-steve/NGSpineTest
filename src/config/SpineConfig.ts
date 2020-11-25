@@ -271,7 +271,10 @@ export class SpineConfig implements ISpineConfig {
 						margin: '5 0',
 						width: 100
 					}
-				}
+				},
+				colorList: [
+					'#943E3E', '#94653E', '#94943E', '#4B943E', '#3E9491', '#3E4594', '#8D3E94'
+				]
 			},
 			addTrackButton: {
 				id: 'AddTrackButton_',
@@ -372,6 +375,7 @@ export interface ITrack {
 	firstAnimationButton: IInputAnimationButton;
 	lastAnimationButton: IInputAnimationButton;
 	mixin: IMixin;
+	colorList: Array<string>;
 }
 
 export interface IInputAnimationButton {

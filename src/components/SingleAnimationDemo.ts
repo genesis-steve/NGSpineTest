@@ -24,7 +24,7 @@ export class SingleAnimationDemo {
 		container.appendChild( label );
 		container.appendChild( HTMLElementCreator.createHTMLElement( HTMLElementType.P, config.description ) );
 
-		animations.forEach( ( animation, i ) => {
+		animations.forEach( ( animation ) => {
 			const animationButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.animationButton );
 			animationButton.id = animation.name + '_Btn';
 			animationButton.textContent = animation.name;
