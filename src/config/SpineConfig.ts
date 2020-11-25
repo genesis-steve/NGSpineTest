@@ -145,7 +145,7 @@ export class SpineConfig implements ISpineConfig {
 		},
 		description: {
 			textContent: 'If you want to make animation looping, please toggle on the checkbox.',
-			fontSize: 20
+			fontSize: 15
 		},
 		buttonContainer: {
 			id: 'singleAnimationDemo',
@@ -163,9 +163,17 @@ export class SpineConfig implements ISpineConfig {
 			margin: '5 0'
 		},
 		loopCheckbox: {
-			type: 'checkbox',
-			width: 15,
-			height: 15
+			label: {
+				textContent: 'Loop',
+				fontSize: 15,
+				margin: '5 0',
+				color: '#8C3535'
+			},
+			input: {
+				type: 'checkbox',
+				width: 15,
+				height: 15
+			}
 		}
 	};
 
@@ -249,8 +257,10 @@ export class SpineConfig implements ISpineConfig {
 			},
 			addTrackButton: {
 				id: 'AddTrackButton_',
+				position: 'relative',
 				fontSize: 15,
 				textContent: 'Add Track',
+				x: 10
 			}
 		},
 		playButton: {
@@ -317,7 +327,12 @@ export interface ISingleAnimationDemo {
 	description: IStyle;
 	buttonContainer: IStyle;
 	animationButton: IStyle;
-	loopCheckbox: IStyle;
+	loopCheckbox: ILoopCheckbox;
+}
+
+export interface ILoopCheckbox {
+	label: IStyle;
+	input: IStyle;
 }
 
 export interface IAnimationMixer {

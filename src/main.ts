@@ -24,7 +24,7 @@ export class GmaeApplication {
 
 	protected mainContainer: HTMLDivElement;
 	protected uploadPage: HTMLDivElement;
-	protected backgroundPalette: HTMLDivElement;
+	protected spineSettingsPanel: HTMLDivElement;
 	protected singleAnimationDemo: HTMLDivElement;
 	protected animationMixer: HTMLDivElement;
 
@@ -55,7 +55,7 @@ export class GmaeApplication {
 	protected onUploadComplete ( data: { res: IResourceDictionary, assetName: string } ): void {
 		this.mainContainer.removeChild( this.uploadPage );
 		this.setupAnimation( data );
-		this.createBackgroundPalette();
+		this.createSpineSettingsPanel();
 		this.createSingleAnimationDemo();
 		this.createAnimationMixer();
 	}
@@ -113,9 +113,9 @@ export class GmaeApplication {
 		this.mainContainer.appendChild( this.uploadPage );
 	}
 
-	protected createBackgroundPalette (): void {
-		this.backgroundPalette = BackgroundPalette.init( this.spineConfig.backgroundPalette, this.animation );
-		this.mainContainer.appendChild( this.backgroundPalette );
+	protected createSpineSettingsPanel (): void {
+		this.spineSettingsPanel = SpineSettingsPanel.init( this.spineConfig.spineSettingsPanel, this.animation );
+		this.mainContainer.appendChild( this.spineSettingsPanel );
 	}
 
 	protected createSingleAnimationDemo (): void {

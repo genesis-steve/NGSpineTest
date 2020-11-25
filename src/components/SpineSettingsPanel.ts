@@ -6,6 +6,7 @@ import { HTMLElementCreator, HTMLElementType } from 'src/utils/HTMLElementCreato
 
 export class SpineSettingsPanel {
 
+	protected static originPosition: IPoint = { x: 1, y: 1 };
 	protected static originScale: IPoint = { x: 1, y: 1 };
 	protected static scale: number = 1;
 	public static onPixiColorUpdateSignal: MiniSignal = new MiniSignal();
@@ -25,10 +26,7 @@ export class SpineSettingsPanel {
 			};
 			container.appendChild( paletteButton );
 		} );
-		///////////////////////
-
-
-
+		this.originPosition = { x: animation.position.x, y: animation.position.y };
 		this.originScale = { x: animation.scale.x, y: animation.scale.y };
 
 		const scaleSettings: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>(
@@ -42,8 +40,7 @@ export class SpineSettingsPanel {
 				return;
 			}
 			this.scale = Math.round( this.scale * 10 - 1 ) / 10;
-			animation.scale.x = this.originScale.x * this.scale;
-			animation.scale.y = this.originScale.y * this.scale;
+			animation.scale.set( this.originScale.x * this.scale, this.originScale.y * this.scale );
 			scaleAmountText.textContent = 'x ' + this.scale.toString();
 		};
 		scaleSettings.appendChild( scaleDownButton );
@@ -55,8 +52,7 @@ export class SpineSettingsPanel {
 		const scaleUpButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.scaleSettings.scaleUpButton );
 		scaleUpButton.onclick = () => {
 			this.scale = Math.round( this.scale * 10 + 1 ) / 10;
-			animation.scale.x = this.originScale.x * this.scale;
-			animation.scale.y = this.originScale.y * this.scale;
+			animation.scale.set( this.originScale.x * this.scale, this.originScale.y * this.scale );
 			scaleAmountText.textContent = 'x ' + this.scale.toString();
 		};
 		scaleSettings.appendChild( scaleUpButton );
@@ -64,14 +60,12 @@ export class SpineSettingsPanel {
 		const resetButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.resetButton );
 		resetButton.onclick = () => {
 			this.scale = 1;
-			animation.scale.x = this.originScale.x;
-			animation.scale.y = this.originScale.x;
+			animation.position.set( this.originPosition.x, this.originPosition.y );
+			animation.scale.set( this.originScale.x, this.originScale.y );
 			scaleAmountText.textContent = 'x ' + this.scale.toString();
 		};
 		container.appendChild( resetButton );
 
-
-		///////////////////
 		return container;
 	}
 }

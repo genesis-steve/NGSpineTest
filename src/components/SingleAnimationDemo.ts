@@ -28,7 +28,8 @@ export class SingleAnimationDemo {
 			const animationButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.animationButton );
 			animationButton.id = animation.name + '_Btn';
 			animationButton.textContent = animation.name;
-			const loopCheckBox: HTMLInputElement = HTMLElementCreator.createHTMLElement<HTMLInputElement>( HTMLElementType.INPUT, config.loopCheckbox );
+			const loopCheckBoxLabel: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.loopCheckbox.label );
+			const loopCheckBox: HTMLInputElement = HTMLElementCreator.createHTMLElement<HTMLInputElement>( HTMLElementType.INPUT, config.loopCheckbox.input );
 			animationButton.onclick = () => {
 				if ( this.spineDataModel.waitInputData.isWaiting ) {
 					this.onAnimationMixSetSignal.dispatch( animation.name );
@@ -38,6 +39,7 @@ export class SingleAnimationDemo {
 			};
 			container.appendChild( animationButton );
 			container.appendChild( loopCheckBox );
+			container.appendChild( loopCheckBoxLabel );
 			container.appendChild( document.createElement( HTMLElementType.BR ) );
 		} );
 		return container;
