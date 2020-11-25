@@ -50,6 +50,9 @@ export class HTMLElementCreator {
 		if ( config.background ) {
 			element.style.background = config.background;
 		}
+		if ( config.textAlign ) {
+			element.style.textAlign = config.textAlign;
+		}
 		if ( config.display ) {
 			( element as HTMLElement as HTMLInputElement ).style.display = config.display;
 		}
@@ -110,6 +113,7 @@ export interface IStyle {
 	fontWeight?: string;
 	color?: string;
 	background?: string;
+	textAlign?: string;
 	textContent?: string;
 	display?: string;
 	value?: string;

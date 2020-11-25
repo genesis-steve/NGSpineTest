@@ -6,10 +6,9 @@ import { IPoint, ISpineConfig, SpineConfig } from 'src/config/SpineConfig';
 import { IMainConfig, MainConfig } from 'src/config/MainConfig';
 import { HTMLElementCreator, HTMLElementType } from 'src/utils/HTMLElementCreator';
 import { UploadPage } from 'src/components/UploadPage';
-import { BackgroundPalette } from 'src/components/BackgroundPalette';
+import { SpineSettingsPanel } from 'src/components/SpineSettingsPanel';
 import { SingleAnimationDemo } from 'src/components/SingleAnimationDemo';
 import { AnimationMixer } from 'src/components/AnimationMixer';
-import { SpineSettingsPanel } from 'src/components/SpineSettingsPanel';
 
 window.onload = () => {
 	new GmaeApplication();
@@ -25,7 +24,6 @@ export class GmaeApplication {
 
 	protected mainContainer: HTMLDivElement;
 	protected uploadPage: HTMLDivElement;
-	protected spineSettingsPanel: HTMLDivElement;
 	protected backgroundPalette: HTMLDivElement;
 	protected singleAnimationDemo: HTMLDivElement;
 	protected animationMixer: HTMLDivElement;
@@ -49,7 +47,7 @@ export class GmaeApplication {
 
 	protected addListeners (): void {
 		UploadPage.onCompleteSignal.add( this.onUploadComplete, this );
-		BackgroundPalette.onPixiColorUpdateSignal.add( this.onPixiColorUpdate, this );
+		SpineSettingsPanel.onPixiColorUpdateSignal.add( this.onPixiColorUpdate, this );
 		SingleAnimationDemo.onSingleAnimationPlaySignal.add( this.onSingleAnimationPlay, this );
 		SingleAnimationDemo.onAnimationMixSetSignal.add( this.onAnimationMixSet, this );
 	}
@@ -57,7 +55,6 @@ export class GmaeApplication {
 	protected onUploadComplete ( data: { res: IResourceDictionary, assetName: string } ): void {
 		this.mainContainer.removeChild( this.uploadPage );
 		this.setupAnimation( data );
-		this.createSpineSettingsPanel();
 		this.createBackgroundPalette();
 		this.createSingleAnimationDemo();
 		this.createAnimationMixer();
@@ -116,13 +113,8 @@ export class GmaeApplication {
 		this.mainContainer.appendChild( this.uploadPage );
 	}
 
-	protected createSpineSettingsPanel (): void {
-		this.spineSettingsPanel = SpineSettingsPanel.init( this.spineConfig.spineSettingsPanel, this.animation );
-		this.mainContainer.appendChild( this.spineSettingsPanel );
-	}
-
 	protected createBackgroundPalette (): void {
-		this.backgroundPalette = BackgroundPalette.init( this.spineConfig.backgroundPalette );
+		this.backgroundPalette = BackgroundPalette.init( this.spineConfig.backgroundPalette, this.animation );
 		this.mainContainer.appendChild( this.backgroundPalette );
 	}
 

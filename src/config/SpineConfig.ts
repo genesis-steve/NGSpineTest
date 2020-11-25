@@ -84,67 +84,12 @@ export class SpineConfig implements ISpineConfig {
 		}
 	};
 
-	public spineSettingsPanel: ISpineSettingsPanel = {
-		title: {
-			id: 'singleAnimationDemoLabel',
-			position: 'relative',
-			textContent: 'Spine Settings',
-			fontSize: 30,
-			fontWeight: 'bold',
-			color: '#FFFFFF',
-			padding: '10 10',
-			background: ElementColor.TITLE,
-			x: 55
-		},
-		container: {
-			id: 'singleAnimationDemo',
-			position: 'relative',
-			x: 0,
-			y: 0,
-			width: this.mainConfig.width - 40,
-			height: 150,
-			boxShadow: ElementColor.INBOX_SHADOW,
-			padding: '20 20'
-		},
-		scaleSettings: {
-			container: {
-				position: 'relative',
-				x: 25,
-				y: 30
-			},
-			scaleTitle: {
-				textContent: 'Scale : ',
-				fontSize: 20,
-				margin: '0 20'
-			},
-			scaleDownButton: {
-				textContent: '◀',
-				fontSize: 20
-			},
-			scaleUpButton: {
-				textContent: '▶',
-				fontSize: 20
-			},
-			scaleAmountText: {
-				fontSize: 20,
-				margin: '0 20'
-			}
-		},
-		resetButton: {
-			position: 'relative',
-			textContent: 'Reset',
-			fontSize: 20,
-			x: 120,
-			y: 50
-		}
-	};
-
-	public backgroundPalette: IBackgroundPalette = {
+	public spineSettingsPanel: IBackgroundPalette = {
 		container: {
 			id: 'backgroundPalette',
 			position: 'relative',
 			x: this.mainConfig.width,
-			y: -this.mainConfig.height - this.spineSettingsPanel.container.height - 40,
+			y: -this.mainConfig.height,
 			width: 50,
 			height: this.mainConfig.height,
 			background: 'linear-gradient(90deg, rgba(237,237,237,1) 0%, rgba(255,255,255,1) 50%, rgba(237,237,237,1) 100%)'
@@ -159,7 +104,33 @@ export class SpineConfig implements ISpineConfig {
 		colorList: [
 			'#000000',	// black
 			'#FFFFFF'	// white
-		]
+		],
+		scaleSettings: {
+			container: {
+				position: 'relative',
+				x: 15,
+				y: 420
+			},
+			scaleDownButton: {
+				textContent: '-',
+				fontSize: 10
+			},
+			scaleUpButton: {
+				textContent: '+',
+				fontSize: 10
+			},
+			scaleAmountText: {
+				fontSize: 10,
+				margin: '10 5'
+			}
+		},
+		resetButton: {
+			position: 'relative',
+			textContent: 'Reset',
+			fontSize: 10,
+			x: 1,
+			y: 440
+		}
 	};
 
 	public singleAnimationDemo: ISingleAnimationDemo = {
@@ -180,15 +151,15 @@ export class SpineConfig implements ISpineConfig {
 			id: 'singleAnimationDemo',
 			position: 'relative',
 			overflow: 'auto',
-			x: this.mainConfig.width + this.backgroundPalette.container.width,
-			y: this.backgroundPalette.container.y - this.backgroundPalette.container.height,
+			x: this.mainConfig.width + this.spineSettingsPanel.container.width,
+			y: this.spineSettingsPanel.container.y - this.spineSettingsPanel.container.height,
 			width: this.mainConfig.width,
 			height: this.mainConfig.height,
 			padding: '0 10',
 			boxShadow: ElementColor.INBOX_SHADOW
 		},
 		animationButton: {
-			fontSize: 20,
+			fontSize: 15,
 			margin: '5 0'
 		},
 		loopCheckbox: {
@@ -300,8 +271,7 @@ export class SpineConfig implements ISpineConfig {
 export interface ISpineConfig {
 	position: IPoint;
 	uploadPage: IUploadPage;
-	backgroundPalette: IBackgroundPalette;
-	spineSettingsPanel: ISpineSettingsPanel;
+	spineSettingsPanel: IBackgroundPalette;
 	singleAnimationDemo: ISingleAnimationDemo;
 	animationMixer: IAnimationMixer;
 }
@@ -331,18 +301,12 @@ export interface IBackgroundPalette {
 	container: IStyle;
 	button: IStyle;
 	colorList: Array<string>;
-}
-
-export interface ISpineSettingsPanel {
-	title: IStyle;
-	container: IStyle;
 	scaleSettings: ISpineScaleSettings;
 	resetButton: IStyle;
 }
 
 export interface ISpineScaleSettings {
 	container: IStyle;
-	scaleTitle: IStyle;
 	scaleDownButton: IStyle;
 	scaleUpButton: IStyle;
 	scaleAmountText: IStyle;

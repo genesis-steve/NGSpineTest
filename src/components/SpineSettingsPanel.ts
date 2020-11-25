@@ -1,38 +1,40 @@
 import * as MiniSignal from 'mini-signals';
-import { Inject } from 'typescript-ioc';
 import { spine } from 'pixi.js';
-import { IPoint, ISpineSettingsPanel } from 'src/config/SpineConfig';
+import { IBackgroundPalette, IPoint } from 'src/config/SpineConfig';
 import { HTMLElementCreator, HTMLElementType } from 'src/utils/HTMLElementCreator';
-import { SpineDataModel } from 'src/core/SpineDataModel';
 
 
 export class SpineSettingsPanel {
 
-	protected static spineDataModel: SpineDataModel;
-
-	public static onSingleAnimationPlaySignal: MiniSignal = new MiniSignal();
-	public static onAnimationMixSetSignal: MiniSignal = new MiniSignal();
-
 	protected static originScale: IPoint = { x: 1, y: 1 };
 	protected static scale: number = 1;
+	public static onPixiColorUpdateSignal: MiniSignal = new MiniSignal();
 
-	public static init ( config: ISpineSettingsPanel, animation: spine.Spine ): HTMLDivElement {
-		this.originScale = { x: animation.scale.x, y: animation.scale.y };
-		const container: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>(
+	public static init ( config: IBackgroundPalette, animation: spine.Spine ): HTMLDivElement {
+		const container: HTMLDivElement = HTMLElementCreator.createHTMLElement(
 			HTMLElementType.DIV, config.container
 		);
-		const title: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>(
-			HTMLElementType.LABEL, config.title
-		);
-		container.appendChild( title );
+		config.colorList.forEach( color => {
+			const paletteButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement(
+				HTMLElementType.BUTTON, {
+				...config.button,
+				background: color
+			} );
+			paletteButton.onclick = () => {
+				this.onPixiColorUpdateSignal.dispatch( +color.replace( '#', '0x' ) );
+			};
+			container.appendChild( paletteButton );
+		} );
+		///////////////////////
+
+
+
+		this.originScale = { x: animation.scale.x, y: animation.scale.y };
 
 		const scaleSettings: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>(
 			HTMLElementType.DIV, config.scaleSettings.container
 		);
 		container.appendChild( scaleSettings );
-
-		const scaleTitle: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.scaleSettings.scaleTitle );
-		scaleSettings.appendChild( scaleTitle );
 
 		const scaleDownButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.scaleSettings.scaleDownButton );
 		scaleDownButton.onclick = () => {
@@ -46,7 +48,7 @@ export class SpineSettingsPanel {
 		};
 		scaleSettings.appendChild( scaleDownButton );
 
-		const scaleAmountText: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.scaleSettings.scaleAmountText );
+		const scaleAmountText: HTMLParagraphElement = HTMLElementCreator.createHTMLElement<HTMLParagraphElement>( HTMLElementType.P, config.scaleSettings.scaleAmountText );
 		scaleAmountText.textContent = 'x ' + this.scale.toString();;
 		scaleSettings.appendChild( scaleAmountText );
 
@@ -68,6 +70,8 @@ export class SpineSettingsPanel {
 		};
 		container.appendChild( resetButton );
 
+
+		///////////////////
 		return container;
 	}
 }
