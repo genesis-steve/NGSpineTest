@@ -41,18 +41,6 @@ export class UploadPage {
 		this.onCompleteSignal.dispatch( { res, assetName: this.assetName } );
 	}
 
-	protected static getObjectUrl ( file: File ): string {
-		if ( window[ 'createObjcectURL' ] != undefined ) {
-			return window[ 'createObjcectURL' ]( file );
-		} else if ( window.URL != undefined ) {
-			return window.URL.createObjectURL( file );
-		} else if ( window.webkitURL != undefined ) {
-			return window.webkitURL.createObjectURL( file );
-		} else {
-			return undefined;
-		}
-	}
-
 	protected static createUploadButton ( container: HTMLDivElement, loadType: string, config: { label: IStyle, input: IStyle } ): void {
 		const uploadLabel: HTMLInputElement = HTMLElementCreator.createHTMLElement(
 			HTMLElementType.LABEL, config.label
@@ -62,7 +50,7 @@ export class UploadPage {
 		);
 		uploadInput.addEventListener( 'change', ( e ) => {
 			const file: File = uploadInput.files[ 0 ];
-			this.loadUrls.set( loadType, this.getObjectUrl( file ) );
+			this.loadUrls.set( loadType, AtlasParser.getObjectUrl( file ) );
 			if ( loadType == LoadExtension.JSON ) {
 				this.assetName = file.name.replace( '.json', '' );
 			}

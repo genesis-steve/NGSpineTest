@@ -84,7 +84,7 @@ export class SpineConfig implements ISpineConfig {
 		}
 	};
 
-	public spineSettingsPanel: IBackgroundPalette = {
+	public spineSettingsPanel: ISpineSettingsPanel = {
 		container: {
 			id: 'backgroundPalette',
 			position: 'relative',
@@ -94,22 +94,42 @@ export class SpineConfig implements ISpineConfig {
 			height: this.mainConfig.height,
 			background: 'linear-gradient(90deg, rgba(237,237,237,1) 0%, rgba(255,255,255,1) 50%, rgba(237,237,237,1) 100%)'
 		},
-		button: {
+		colorButton: {
 			id: 'backgroundPaletteButton_',
 			position: 'relative',
 			width: 50,
-			height: 50,
-			background: 'red'
+			height: 50
 		},
 		colorList: [
 			'#000000',	// black
 			'#FFFFFF'	// white
 		],
+		addImageBackground: {
+			input: {
+				id: 'addImageInput',
+				display: 'none',
+				type: 'file'
+			},
+			label: {
+				id: 'addImageLabel',
+				position: 'relative',
+				width: 30,
+				height: 30,
+				background: '#DADADA',
+				textContent: '+',
+				fontSize: 30,
+				fontWeight: 'bold',
+				display: 'block',
+				padding: '10',
+				textAlign: 'center',
+				htmlFor: 'addImageInput'
+			}
+		},
 		scaleSettings: {
 			container: {
 				position: 'relative',
 				x: 15,
-				y: 420
+				y: 370
 			},
 			scaleDownButton: {
 				textContent: '-',
@@ -129,7 +149,7 @@ export class SpineConfig implements ISpineConfig {
 			textContent: 'Reset',
 			fontSize: 10,
 			x: 1,
-			y: 440
+			y: 390
 		}
 	};
 
@@ -142,10 +162,6 @@ export class SpineConfig implements ISpineConfig {
 			color: '#FFFFFF',
 			padding: '10 10',
 			background: ElementColor.TITLE
-		},
-		description: {
-			textContent: 'If you want to make animation looping, please toggle on the checkbox.',
-			fontSize: 15
 		},
 		buttonContainer: {
 			id: 'singleAnimationDemo',
@@ -164,15 +180,14 @@ export class SpineConfig implements ISpineConfig {
 		},
 		loopCheckbox: {
 			label: {
-				textContent: 'Loop',
-				fontSize: 15,
-				margin: '5 0',
+				textContent: 'Loop Aanimation',
+				fontSize: 20,
 				color: '#8C3535'
 			},
 			input: {
 				type: 'checkbox',
-				width: 15,
-				height: 15
+				width: 20,
+				height: 20
 			}
 		}
 	};
@@ -281,7 +296,7 @@ export class SpineConfig implements ISpineConfig {
 export interface ISpineConfig {
 	position: IPoint;
 	uploadPage: IUploadPage;
-	spineSettingsPanel: IBackgroundPalette;
+	spineSettingsPanel: ISpineSettingsPanel;
 	singleAnimationDemo: ISingleAnimationDemo;
 	animationMixer: IAnimationMixer;
 }
@@ -307,12 +322,18 @@ export interface IUploadPage {
 	confirmButton: IStyle;
 }
 
-export interface IBackgroundPalette {
+export interface ISpineSettingsPanel {
 	container: IStyle;
-	button: IStyle;
+	colorButton: IStyle;
 	colorList: Array<string>;
+	addImageBackground: IAddImageBackground;
 	scaleSettings: ISpineScaleSettings;
 	resetButton: IStyle;
+}
+
+export interface IAddImageBackground {
+	label: IStyle;
+	input: IStyle;
 }
 
 export interface ISpineScaleSettings {
@@ -324,7 +345,6 @@ export interface ISpineScaleSettings {
 
 export interface ISingleAnimationDemo {
 	title: IStyle;
-	description: IStyle;
 	buttonContainer: IStyle;
 	animationButton: IStyle;
 	loopCheckbox: ILoopCheckbox;

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 window.PIXI = PIXI;
 import 'pixi-spine';
-import { Application, spine, IResourceDictionary } from 'pixi.js';
+import { Application, spine, IResourceDictionary, Texture, Container, Sprite } from 'pixi.js';
 import { IPoint, ISpineConfig, SpineConfig } from 'src/config/SpineConfig';
 import { IMainConfig, MainConfig } from 'src/config/MainConfig';
 import { HTMLElementCreator, HTMLElementType } from 'src/utils/HTMLElementCreator';
@@ -21,6 +21,7 @@ export class GmaeApplication {
 
 	protected pixi: Application;
 	protected animation: spine.Spine;
+	protected background: Sprite;
 
 	protected mainContainer: HTMLDivElement;
 	protected uploadPage: HTMLDivElement;
@@ -63,10 +64,19 @@ export class GmaeApplication {
 	protected setupAnimation ( data: { res: IResourceDictionary, assetName: string } ): void {
 		this.pixi = new Application( this.appConfig );
 		this.pixi.view.style.cursor = 'grab';
+
+		const backgroundContainer = new Container();
+		this.pixi.stage.addChild( backgroundContainer );
+		this.background = new PIXI.Sprite();
+		this.background.width = this.appConfig.width;
+		this.background.height = this.appConfig.height;
+		backgroundContainer.addChild( this.background );
+
 		this.animation = new spine.Spine( data.res[ data.assetName + '.json' ].spineData );
 		this.animation.scale.set( 0.5, 0.5 )
 		this.animation.renderable = false;
 		this.pixi.stage.addChild( this.animation );
+
 		this.setDragAnimation();
 	}
 
@@ -95,8 +105,13 @@ export class GmaeApplication {
 		};
 	}
 
-	protected onPixiColorUpdate ( color: number ): void {
-		this.pixi.renderer.backgroundColor = color;
+	protected onPixiColorUpdate ( colorOrUrl: string, isImg: boolean ): void {
+		if ( isImg ) {
+			const texture = Texture.from( colorOrUrl );
+			this.background.texture = texture;
+		} else {
+			this.pixi.renderer.backgroundColor = +colorOrUrl.replace( '#', '0x' );
+		}
 	}
 
 	protected onSingleAnimationPlay ( animationName: string, isLoop?: boolean ): void {
