@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 window.PIXI = PIXI;
 import 'pixi-spine';
+import './style.css';
 import { Application, spine, IResourceDictionary, Texture, Container, Sprite } from 'pixi.js';
 import { IPoint, ISpineConfig, SpineConfig } from 'src/config/SpineConfig';
 import { IMainConfig, MainConfig } from 'src/config/MainConfig';

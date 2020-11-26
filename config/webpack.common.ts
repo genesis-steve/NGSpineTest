@@ -1,7 +1,5 @@
 import * as Path from 'path';
 import * as HtmlPlugin from 'html-webpack-plugin';
-import * as CopyWebpackPlugin from 'copy-webpack-plugin';
-import * as ImageminPlugin from 'imagemin-webpack-plugin';
 
 const appDir = Path.dirname( __dirname );
 
@@ -14,6 +12,10 @@ module.exports = {
 				test: /\.tsx?$/,
 				use: 'ts-loader',
 				exclude: /node_modules/,
+			},
+			{
+				test: /\.css$/i,
+				use: [ 'style-loader', 'css-loader' ],
 			}
 		]
 	},
