@@ -1,15 +1,14 @@
 import * as PIXI from 'pixi.js';
 window.PIXI = PIXI;
 import 'pixi-spine';
-import { Application, spine, IResourceDictionary } from 'pixi.js';
+import { Application, spine, IResourceDictionary, Texture, Container, Sprite } from 'pixi.js';
 import { IPoint, ISpineConfig, SpineConfig } from 'src/config/SpineConfig';
 import { IMainConfig, MainConfig } from 'src/config/MainConfig';
 import { HTMLElementCreator, HTMLElementType } from 'src/utils/HTMLElementCreator';
 import { UploadPage } from 'src/components/UploadPage';
-import { BackgroundPalette } from 'src/components/BackgroundPalette';
+import { SpineSettingsPanel } from 'src/components/SpineSettingsPanel';
 import { SingleAnimationDemo } from 'src/components/SingleAnimationDemo';
 import { AnimationMixer } from 'src/components/AnimationMixer';
-import { SpineSettingsPanel } from 'src/components/SpineSettingsPanel';
 
 window.onload = () => {
 	new GmaeApplication();
@@ -22,15 +21,16 @@ export class GmaeApplication {
 
 	protected pixi: Application;
 	protected animation: spine.Spine;
+	protected background: Sprite;
 
 	protected mainContainer: HTMLDivElement;
 	protected uploadPage: HTMLDivElement;
 	protected spineSettingsPanel: HTMLDivElement;
-	protected backgroundPalette: HTMLDivElement;
 	protected singleAnimationDemo: HTMLDivElement;
 	protected animationMixer: HTMLDivElement;
 
 	protected isDrag: boolean = false;
+	protected draggable: boolean = false;
 
 	constructor () {
 		this.appConfig = new MainConfig();
@@ -49,7 +49,8 @@ export class GmaeApplication {
 
 	protected addListeners (): void {
 		UploadPage.onCompleteSignal.add( this.onUploadComplete, this );
-		BackgroundPalette.onPixiColorUpdateSignal.add( this.onPixiColorUpdate, this );
+		SpineSettingsPanel.onPixiColorUpdateSignal.add( this.onPixiColorUpdate, this );
+		SpineSettingsPanel.onAnimationDraggableChangeSignal.add( this.onAnimationDraggableChange, this );
 		SingleAnimationDemo.onSingleAnimationPlaySignal.add( this.onSingleAnimationPlay, this );
 		SingleAnimationDemo.onAnimationMixSetSignal.add( this.onAnimationMixSet, this );
 	}
@@ -58,48 +59,71 @@ export class GmaeApplication {
 		this.mainContainer.removeChild( this.uploadPage );
 		this.setupAnimation( data );
 		this.createSpineSettingsPanel();
-		this.createBackgroundPalette();
 		this.createSingleAnimationDemo();
 		this.createAnimationMixer();
 	}
 
 	protected setupAnimation ( data: { res: IResourceDictionary, assetName: string } ): void {
 		this.pixi = new Application( this.appConfig );
-		this.pixi.view.style.cursor = 'grab';
+
+		const backgroundContainer = new Container();
+		this.pixi.stage.addChild( backgroundContainer );
+		this.background = new PIXI.Sprite();
+		this.background.width = this.appConfig.width;
+		this.background.height = this.appConfig.height;
+		backgroundContainer.addChild( this.background );
+
 		this.animation = new spine.Spine( data.res[ data.assetName + '.json' ].spineData );
 		this.animation.scale.set( 0.5, 0.5 )
 		this.animation.renderable = false;
 		this.pixi.stage.addChild( this.animation );
+
 		this.setDragAnimation();
 	}
 
 	protected setDragAnimation (): void {
 		let dragStart: IPoint = { x: 0, y: 0 };
 		this.pixi.view.onpointerdown = ( event ) => {
-			this.isDrag = true;
+			this.setPixiCursorStyle( this.draggable ? 'grabbing' : 'default' );
+			this.isDrag = this.draggable;
 			dragStart = { x: event.clientX, y: event.clientY };
 		};
 		this.pixi.view.onpointermove = ( event ) => {
 			if ( this.isDrag ) {
-				this.pixi.view.style.cursor = 'grabbing';
-				const offsetX: number = event.clientX - dragStart.x;
-				const offsetY: number = event.clientY - dragStart.y;
-				this.animation.position.set( this.animation.position.x + offsetX, this.animation.position.y + offsetY );
+				const posX: number = this.animation.position.x + event.clientX - dragStart.x;
+				const posY: number = this.animation.position.y + event.clientY - dragStart.y;
+				this.animation.position.set( posX, posY );
 				dragStart = { x: event.clientX, y: event.clientY };
+				window.postMessage( {
+					eventType: 'onAnimationDrag',
+					data: {
+						posX, posY
+					}
+				}, '*' );
 			}
 		};
 		this.pixi.view.onpointerup = () => {
-			this.pixi.view.style.cursor = 'grab';
+			this.setPixiCursorStyle( this.draggable ? 'grab' : 'default' );
 			this.isDrag = false;
 		};
 		this.pixi.view.onpointerout = () => {
-			this.pixi.view.style.cursor = 'grab';
+			this.setPixiCursorStyle( this.draggable ? 'grab' : 'default' );
 			this.isDrag = false;
 		};
 	}
 
-	protected onPixiColorUpdate ( color: number ): void {
-		this.pixi.renderer.backgroundColor = color;
+	protected onPixiColorUpdate ( colorOrUrl: string, isImg: boolean ): void {
+		if ( isImg ) {
+			const texture = Texture.from( colorOrUrl );
+			this.background.texture = texture;
+		} else {
+			this.pixi.renderer.backgroundColor = +colorOrUrl.replace( '#', '0x' );
+		}
+	}
+
+	protected onAnimationDraggableChange ( draggable: boolean ): void {
+		this.draggable = draggable;
+		this.setPixiCursorStyle( this.draggable ? 'grab' : 'default' );
 	}
 
 	protected onSingleAnimationPlay ( animationName: string, isLoop?: boolean ): void {
@@ -117,23 +141,22 @@ export class GmaeApplication {
 	}
 
 	protected createSpineSettingsPanel (): void {
-		this.spineSettingsPanel = SpineSettingsPanel.init( this.spineConfig.spineSettingsPanel, this.animation );
+		this.spineSettingsPanel = SpineSettingsPanel.init( this.spineConfig.spineSettingsPanel, this.animation, this.pixi );
 		this.mainContainer.appendChild( this.spineSettingsPanel );
 	}
 
-	protected createBackgroundPalette (): void {
-		this.backgroundPalette = BackgroundPalette.init( this.spineConfig.backgroundPalette );
-		this.mainContainer.appendChild( this.backgroundPalette );
-	}
-
 	protected createSingleAnimationDemo (): void {
-		this.singleAnimationDemo = SingleAnimationDemo.init( this.spineConfig.singleAnimationDemo, this.animation.spineData.animations );
+		this.singleAnimationDemo = SingleAnimationDemo.init( this.spineConfig.singleAnimationDemo, this.animation );
 		this.mainContainer.appendChild( this.singleAnimationDemo );
 	}
 
 	protected createAnimationMixer (): void {
 		this.animationMixer = AnimationMixer.init( this.spineConfig.animationMixer, this.animation );
 		this.mainContainer.appendChild( this.animationMixer );
+	}
+
+	protected setPixiCursorStyle ( style: string ): void {
+		this.pixi.view.style.cursor = style;
 	}
 
 }

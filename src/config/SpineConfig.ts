@@ -85,81 +85,128 @@ export class SpineConfig implements ISpineConfig {
 	};
 
 	public spineSettingsPanel: ISpineSettingsPanel = {
-		title: {
-			id: 'singleAnimationDemoLabel',
-			position: 'relative',
-			textContent: 'Spine Settings',
-			fontSize: 30,
-			fontWeight: 'bold',
-			color: '#FFFFFF',
-			padding: '10 10',
-			background: ElementColor.TITLE,
-			x: 55
-		},
-		container: {
-			id: 'singleAnimationDemo',
-			position: 'relative',
-			x: 0,
-			y: 0,
-			width: this.mainConfig.width - 40,
-			height: 150,
-			boxShadow: ElementColor.INBOX_SHADOW,
-			padding: '20 20'
-		},
-		scaleSettings: {
-			container: {
-				position: 'relative',
-				x: 25,
-				y: 30
-			},
-			scaleTitle: {
-				textContent: 'Scale : ',
-				fontSize: 20,
-				margin: '0 20'
-			},
-			scaleDownButton: {
-				textContent: '◀',
-				fontSize: 20
-			},
-			scaleUpButton: {
-				textContent: '▶',
-				fontSize: 20
-			},
-			scaleAmountText: {
-				fontSize: 20,
-				margin: '0 20'
-			}
-		},
-		resetButton: {
-			position: 'relative',
-			textContent: 'Reset',
-			fontSize: 20,
-			x: 120,
-			y: 50
-		}
-	};
-
-	public backgroundPalette: IBackgroundPalette = {
 		container: {
 			id: 'backgroundPalette',
 			position: 'relative',
 			x: this.mainConfig.width,
-			y: -this.mainConfig.height - this.spineSettingsPanel.container.height - 40,
+			y: -this.mainConfig.height,
 			width: 50,
 			height: this.mainConfig.height,
 			background: 'linear-gradient(90deg, rgba(237,237,237,1) 0%, rgba(255,255,255,1) 50%, rgba(237,237,237,1) 100%)'
 		},
-		button: {
+		colorButton: {
 			id: 'backgroundPaletteButton_',
 			position: 'relative',
 			width: 50,
-			height: 50,
-			background: 'red'
+			height: 50
 		},
 		colorList: [
 			'#000000',	// black
 			'#FFFFFF'	// white
-		]
+		],
+		addImageBackground: {
+			input: {
+				id: 'addImageInput',
+				display: 'none',
+				type: 'file'
+			},
+			label: {
+				id: 'addImageLabel',
+				position: 'relative',
+				width: 36,
+				height: 16,
+				border: '2px solid #000000',
+				background: '#DADADA',
+				display: 'inline-block',
+				textContent: '+Img',
+				fontSize: 15,
+				fontWeight: 'bold',
+				padding: '15 5',
+				htmlFor: 'addImageInput'
+			}
+		},
+		animationPosition: {
+			title: {
+				position: 'absolute',
+				textContent: 'Position',
+				fontSize: 15,
+				fontWeight: 'bold',
+				textAlign: 'center',
+				x: 0,
+				y: 340
+			},
+			posX: {
+				position: 'absolute',
+				fontSize: 15,
+				textAlign: 'center',
+				x: 5,
+				y: 360
+			},
+			posY: {
+				position: 'absolute',
+				fontSize: 15,
+				textAlign: 'center',
+				x: 5,
+				y: 380
+			}
+		},
+		dragOption: {
+			label: {
+				id: 'dragCheckboxLabel',
+				position: 'absolute',
+				textContent: 'Drag',
+				fontSize: 15,
+				fontWeight: 'bold',
+				display: 'block',
+				textAlign: 'center',
+				x: 10,
+				y: 420
+			},
+			input: {
+				id: 'dragCheckboxInput',
+				type: 'checkbox',
+				position: 'absolute',
+				width: 15,
+				height: 15,
+				x: 13,
+				y: 440
+			}
+		},
+		scaleOption: {
+			container: {
+				position: 'absolute',
+				x: 15,
+				y: 500
+			},
+			label: {
+				position: 'relative',
+				fontSize: 15,
+				margin: '10 5',
+				textContent: 'Scale',
+				fontWeight: 'bold',
+				x: -10,
+				y: -5
+			},
+			scaleDownButton: {
+				textContent: '-',
+				fontSize: 10
+			},
+			scaleUpButton: {
+				textContent: '+',
+				fontSize: 10
+			},
+			scaleAmountText: {
+				fontSize: 10,
+				margin: '10 5'
+			}
+		},
+		resetButton: {
+			position: 'absolute',
+			textContent: 'Reset',
+			fontSize: 10,
+			x: 1,
+			y: 600
+		}
 	};
 
 	public singleAnimationDemo: ISingleAnimationDemo = {
@@ -170,37 +217,61 @@ export class SpineConfig implements ISpineConfig {
 			fontWeight: 'bold',
 			color: '#FFFFFF',
 			padding: '10 10',
-			background: ElementColor.TITLE
-		},
-		description: {
-			textContent: 'If you want to make animation looping, please toggle on the checkbox.',
-			fontSize: 20
+			background: ElementColor.TITLE,
+			lineHeight: 1,
+			margin: '10px 0px 0px 0px',
+			textAlign: 'center'
 		},
 		buttonContainer: {
 			id: 'singleAnimationDemo',
 			position: 'relative',
 			overflow: 'auto',
-			x: this.mainConfig.width + this.backgroundPalette.container.width,
-			y: this.backgroundPalette.container.y - this.backgroundPalette.container.height,
+			x: this.mainConfig.width + this.spineSettingsPanel.container.width,
+			y: this.spineSettingsPanel.container.y - this.spineSettingsPanel.container.height,
 			width: this.mainConfig.width,
 			height: this.mainConfig.height,
 			padding: '0 10',
 			boxShadow: ElementColor.INBOX_SHADOW
 		},
 		animationButton: {
-			fontSize: 20,
+			fontSize: 15,
 			margin: '5 0'
 		},
 		loopCheckbox: {
-			type: 'checkbox',
-			width: 15,
-			height: 15
+			label: {
+				position: 'relative',
+				textContent: 'Loop Aanimation',
+				fontSize: 20,
+				color: '#8C3535',
+				margin: '10px 0px',
+				x: 5,
+				y: -2
+			},
+			input: {
+				position: 'relative',
+				type: 'checkbox',
+				width: 20,
+				height: 20,
+				margin: '10px 0px'
+			}
 		}
 	};
 
 	public animationMixer: IAnimationMixer = {
+		title: {
+			id: 'AnimationMixerTitle',
+			textContent: 'Animation Mixer',
+			fontSize: 30,
+			fontWeight: 'bold',
+			color: '#FFFFFF',
+			padding: '10 10',
+			background: ElementColor.TITLE,
+			lineHeight: 1,
+			margin: '10px 0px 30px 0px',
+			textAlign: 'center'
+		},
 		container: {
-			id: 'animationMixer',
+			id: 'AnimationMixerContainer',
 			position: 'relative',
 			overflow: 'auto',
 			x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width + 20,
@@ -213,7 +284,8 @@ export class SpineConfig implements ISpineConfig {
 		},
 		mixGroup: {
 			container: {
-				id: 'MixGroup_'
+				id: 'MixGroup_',
+				position: 'relative'
 			},
 			track: {
 				title: {
@@ -222,11 +294,12 @@ export class SpineConfig implements ISpineConfig {
 					color: '#FFFFFF',
 					background: ElementColor.TITLE,
 					fontWeight: 'Bold',
-					padding: '5 5'
+					padding: '5 5',
+					lineHeight: 1
 				},
 				container: {
 					id: 'TrackGroup_',
-					margin: '30 0 0 0'
+					margin: '10 0 0 0'
 				},
 				firstAnimationButton: {
 					label: {
@@ -271,7 +344,17 @@ export class SpineConfig implements ISpineConfig {
 						margin: '5 0',
 						width: 100
 					}
-				}
+				},
+				colorList: [
+					'#943E3E', '#94653E', '#94943E', '#4B943E', '#3E9491', '#3E4594', '#8D3E94'
+				]
+			},
+			addTrackButton: {
+				id: 'AddTrackButton_',
+				position: 'relative',
+				fontSize: 15,
+				textContent: 'Add Track',
+				x: 10
 			}
 		},
 		playButton: {
@@ -292,7 +375,6 @@ export class SpineConfig implements ISpineConfig {
 export interface ISpineConfig {
 	position: IPoint;
 	uploadPage: IUploadPage;
-	backgroundPalette: IBackgroundPalette;
 	spineSettingsPanel: ISpineSettingsPanel;
 	singleAnimationDemo: ISingleAnimationDemo;
 	animationMixer: IAnimationMixer;
@@ -319,22 +401,31 @@ export interface IUploadPage {
 	confirmButton: IStyle;
 }
 
-export interface IBackgroundPalette {
-	container: IStyle;
-	button: IStyle;
-	colorList: Array<string>;
-}
-
 export interface ISpineSettingsPanel {
-	title: IStyle;
 	container: IStyle;
-	scaleSettings: ISpineScaleSettings;
+	colorButton: IStyle;
+	colorList: Array<string>;
+	addImageBackground: IInputWithLabel;
+	animationPosition: IAnimationPosition;
+	dragOption: IInputWithLabel;
+	scaleOption: ISpineScaleSettings;
 	resetButton: IStyle;
 }
 
+export interface IAnimationPosition {
+	title: IStyle;
+	posX: IStyle;
+	posY: IStyle;
+}
+
+export interface IInputWithLabel {
+	label: IStyle;
+	input: IStyle;
+}
+
 export interface ISpineScaleSettings {
+	label: IStyle;
 	container: IStyle;
-	scaleTitle: IStyle;
 	scaleDownButton: IStyle;
 	scaleUpButton: IStyle;
 	scaleAmountText: IStyle;
@@ -342,13 +433,18 @@ export interface ISpineScaleSettings {
 
 export interface ISingleAnimationDemo {
 	title: IStyle;
-	description: IStyle;
 	buttonContainer: IStyle;
 	animationButton: IStyle;
-	loopCheckbox: IStyle;
+	loopCheckbox: ILoopCheckbox;
+}
+
+export interface ILoopCheckbox {
+	label: IStyle;
+	input: IStyle;
 }
 
 export interface IAnimationMixer {
+	title: IStyle;
 	container: IStyle;
 	mixGroup: IMixGroup;
 	playButton: IStyle;
@@ -358,6 +454,7 @@ export interface IAnimationMixer {
 export interface IMixGroup {
 	container: IStyle;
 	track: ITrack;
+	addTrackButton: IStyle;
 }
 
 export interface ITrack {
@@ -366,6 +463,7 @@ export interface ITrack {
 	firstAnimationButton: IInputAnimationButton;
 	lastAnimationButton: IInputAnimationButton;
 	mixin: IMixin;
+	colorList: Array<string>;
 }
 
 export interface IInputAnimationButton {

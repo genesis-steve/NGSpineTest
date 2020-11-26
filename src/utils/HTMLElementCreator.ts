@@ -35,6 +35,9 @@ export class HTMLElementCreator {
 		if ( config.fontWeight ) {
 			element.style.fontWeight = config.fontWeight;
 		}
+		if ( config.lineHeight ) {
+			element.style.lineHeight = config.lineHeight.toString();
+		}
 		if ( config.margin ) {
 			element.style.margin = config.margin;
 		}
@@ -49,6 +52,9 @@ export class HTMLElementCreator {
 		}
 		if ( config.background ) {
 			element.style.background = config.background;
+		}
+		if ( config.textAlign ) {
+			element.style.textAlign = config.textAlign;
 		}
 		if ( config.display ) {
 			( element as HTMLElement as HTMLInputElement ).style.display = config.display;
@@ -108,8 +114,10 @@ export interface IStyle {
 	height?: number;
 	fontSize?: number;
 	fontWeight?: string;
+	lineHeight?: number;
 	color?: string;
 	background?: string;
+	textAlign?: string;
 	textContent?: string;
 	display?: string;
 	value?: string;

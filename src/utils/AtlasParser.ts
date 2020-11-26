@@ -118,4 +118,16 @@ export class AtlasParser {
 			} );
 		}
 	}
+
+	public static getObjectUrl ( file: File ): string {
+		if ( window[ 'createObjcectURL' ] != undefined ) {
+			return window[ 'createObjcectURL' ]( file );
+		} else if ( window.URL != undefined ) {
+			return window.URL.createObjectURL( file );
+		} else if ( window.webkitURL != undefined ) {
+			return window.webkitURL.createObjectURL( file );
+		} else {
+			return undefined;
+		}
+	}
 }
