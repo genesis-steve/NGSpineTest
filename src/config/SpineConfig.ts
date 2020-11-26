@@ -113,19 +113,55 @@ export class SpineConfig implements ISpineConfig {
 			label: {
 				id: 'addImageLabel',
 				position: 'relative',
-				width: 30,
-				height: 30,
+				width: 36,
+				height: 16,
+				border: '2px solid #000000',
 				background: '#DADADA',
-				textContent: '+',
-				fontSize: 30,
+				display: 'inline-block',
+				textContent: '+Img',
+				fontSize: 15,
 				fontWeight: 'bold',
-				display: 'block',
-				padding: '10',
-				textAlign: 'center',
+				padding: '15 5',
 				htmlFor: 'addImageInput'
 			}
 		},
-		dragCheckbox: {
+		animationPosition: {
+			title: {
+				position: 'absolute',
+				textContent: 'Position',
+				fontSize: 15,
+				fontWeight: 'bold',
+				textAlign: 'center',
+				x: 0,
+				y: 340
+			},
+			posX: {
+				position: 'absolute',
+				fontSize: 15,
+				textAlign: 'center',
+				x: 5,
+				y: 360
+			},
+			posY: {
+				position: 'absolute',
+				fontSize: 15,
+				textAlign: 'center',
+				x: 5,
+				y: 380
+			}
+		},
+		dragOption: {
+			label: {
+				id: 'dragCheckboxLabel',
+				position: 'absolute',
+				textContent: 'Drag',
+				fontSize: 15,
+				fontWeight: 'bold',
+				display: 'block',
+				textAlign: 'center',
+				x: 10,
+				y: 420
+			},
 			input: {
 				id: 'dragCheckboxInput',
 				type: 'checkbox',
@@ -133,24 +169,23 @@ export class SpineConfig implements ISpineConfig {
 				width: 15,
 				height: 15,
 				x: 13,
-				y: 400
-			},
-			label: {
-				id: 'dragCheckboxLabel',
-				position: 'absolute',
-				textContent: 'drag',
-				fontSize: 15,
-				display: 'block',
-				textAlign: 'center',
-				x: 13,
-				y: 420
+				y: 440
 			}
 		},
-		scaleSettings: {
+		scaleOption: {
 			container: {
 				position: 'absolute',
 				x: 15,
-				y: 530
+				y: 500
+			},
+			label: {
+				position: 'relative',
+				fontSize: 15,
+				margin: '10 5',
+				textContent: 'Scale',
+				fontWeight: 'bold',
+				x: -10,
+				y: -5
 			},
 			scaleDownButton: {
 				textContent: '-',
@@ -170,7 +205,7 @@ export class SpineConfig implements ISpineConfig {
 			textContent: 'Reset',
 			fontSize: 10,
 			x: 1,
-			y: 620
+			y: 600
 		}
 	};
 
@@ -371,9 +406,16 @@ export interface ISpineSettingsPanel {
 	colorButton: IStyle;
 	colorList: Array<string>;
 	addImageBackground: IInputWithLabel;
-	dragCheckbox: IInputWithLabel;
-	scaleSettings: ISpineScaleSettings;
+	animationPosition: IAnimationPosition;
+	dragOption: IInputWithLabel;
+	scaleOption: ISpineScaleSettings;
 	resetButton: IStyle;
+}
+
+export interface IAnimationPosition {
+	title: IStyle;
+	posX: IStyle;
+	posY: IStyle;
 }
 
 export interface IInputWithLabel {
@@ -382,6 +424,7 @@ export interface IInputWithLabel {
 }
 
 export interface ISpineScaleSettings {
+	label: IStyle;
 	container: IStyle;
 	scaleDownButton: IStyle;
 	scaleUpButton: IStyle;

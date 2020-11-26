@@ -90,10 +90,16 @@ export class GmaeApplication {
 		};
 		this.pixi.view.onpointermove = ( event ) => {
 			if ( this.isDrag ) {
-				const offsetX: number = event.clientX - dragStart.x;
-				const offsetY: number = event.clientY - dragStart.y;
-				this.animation.position.set( this.animation.position.x + offsetX, this.animation.position.y + offsetY );
+				const posX: number = this.animation.position.x + event.clientX - dragStart.x;
+				const posY: number = this.animation.position.y + event.clientY - dragStart.y;
+				this.animation.position.set( posX, posY );
 				dragStart = { x: event.clientX, y: event.clientY };
+				window.postMessage( {
+					eventType: 'onAnimationDrag',
+					data: {
+						posX, posY
+					}
+				}, '*' );
 			}
 		};
 		this.pixi.view.onpointerup = () => {
@@ -135,7 +141,7 @@ export class GmaeApplication {
 	}
 
 	protected createSpineSettingsPanel (): void {
-		this.spineSettingsPanel = SpineSettingsPanel.init( this.spineConfig.spineSettingsPanel, this.animation );
+		this.spineSettingsPanel = SpineSettingsPanel.init( this.spineConfig.spineSettingsPanel, this.animation, this.pixi );
 		this.mainContainer.appendChild( this.spineSettingsPanel );
 	}
 
