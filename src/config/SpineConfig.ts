@@ -125,11 +125,32 @@ export class SpineConfig implements ISpineConfig {
 				htmlFor: 'addImageInput'
 			}
 		},
+		dragCheckbox: {
+			input: {
+				id: 'dragCheckboxInput',
+				type: 'checkbox',
+				position: 'absolute',
+				width: 15,
+				height: 15,
+				x: 13,
+				y: 400
+			},
+			label: {
+				id: 'dragCheckboxLabel',
+				position: 'absolute',
+				textContent: 'drag',
+				fontSize: 15,
+				display: 'block',
+				textAlign: 'center',
+				x: 13,
+				y: 420
+			}
+		},
 		scaleSettings: {
 			container: {
-				position: 'relative',
+				position: 'absolute',
 				x: 15,
-				y: 370
+				y: 530
 			},
 			scaleDownButton: {
 				textContent: '-',
@@ -145,11 +166,11 @@ export class SpineConfig implements ISpineConfig {
 			}
 		},
 		resetButton: {
-			position: 'relative',
+			position: 'absolute',
 			textContent: 'Reset',
 			fontSize: 10,
 			x: 1,
-			y: 390
+			y: 620
 		}
 	};
 
@@ -161,7 +182,10 @@ export class SpineConfig implements ISpineConfig {
 			fontWeight: 'bold',
 			color: '#FFFFFF',
 			padding: '10 10',
-			background: ElementColor.TITLE
+			background: ElementColor.TITLE,
+			lineHeight: 1,
+			margin: '10px 0px 0px 0px',
+			textAlign: 'center'
 		},
 		buttonContainer: {
 			id: 'singleAnimationDemo',
@@ -180,21 +204,39 @@ export class SpineConfig implements ISpineConfig {
 		},
 		loopCheckbox: {
 			label: {
+				position: 'relative',
 				textContent: 'Loop Aanimation',
 				fontSize: 20,
-				color: '#8C3535'
+				color: '#8C3535',
+				margin: '10px 0px',
+				x: 5,
+				y: -2
 			},
 			input: {
+				position: 'relative',
 				type: 'checkbox',
 				width: 20,
-				height: 20
+				height: 20,
+				margin: '10px 0px'
 			}
 		}
 	};
 
 	public animationMixer: IAnimationMixer = {
+		title: {
+			id: 'AnimationMixerTitle',
+			textContent: 'Animation Mixer',
+			fontSize: 30,
+			fontWeight: 'bold',
+			color: '#FFFFFF',
+			padding: '10 10',
+			background: ElementColor.TITLE,
+			lineHeight: 1,
+			margin: '10px 0px 30px 0px',
+			textAlign: 'center'
+		},
 		container: {
-			id: 'animationMixer',
+			id: 'AnimationMixerContainer',
 			position: 'relative',
 			overflow: 'auto',
 			x: this.singleAnimationDemo.buttonContainer.x + this.singleAnimationDemo.buttonContainer.width + 20,
@@ -207,7 +249,8 @@ export class SpineConfig implements ISpineConfig {
 		},
 		mixGroup: {
 			container: {
-				id: 'MixGroup_'
+				id: 'MixGroup_',
+				position: 'relative'
 			},
 			track: {
 				title: {
@@ -216,11 +259,12 @@ export class SpineConfig implements ISpineConfig {
 					color: '#FFFFFF',
 					background: ElementColor.TITLE,
 					fontWeight: 'Bold',
-					padding: '5 5'
+					padding: '5 5',
+					lineHeight: 1
 				},
 				container: {
 					id: 'TrackGroup_',
-					margin: '30 0 0 0'
+					margin: '10 0 0 0'
 				},
 				firstAnimationButton: {
 					label: {
@@ -326,12 +370,13 @@ export interface ISpineSettingsPanel {
 	container: IStyle;
 	colorButton: IStyle;
 	colorList: Array<string>;
-	addImageBackground: IAddImageBackground;
+	addImageBackground: IInputWithLabel;
+	dragCheckbox: IInputWithLabel;
 	scaleSettings: ISpineScaleSettings;
 	resetButton: IStyle;
 }
 
-export interface IAddImageBackground {
+export interface IInputWithLabel {
 	label: IStyle;
 	input: IStyle;
 }
@@ -356,6 +401,7 @@ export interface ILoopCheckbox {
 }
 
 export interface IAnimationMixer {
+	title: IStyle;
 	container: IStyle;
 	mixGroup: IMixGroup;
 	playButton: IStyle;

@@ -11,38 +11,62 @@ export class SingleAnimationDemo {
 	@Inject
 	protected static spineDataModel: SpineDataModel;
 
+	protected static config: ISingleAnimationDemo;
+	protected static animation: spine.Spine;
+	protected static panelContainer: HTMLDivElement;
+
+	protected static loopCheckBoxInput: HTMLInputElement;
+
 	public static onSingleAnimationPlaySignal: MiniSignal = new MiniSignal();
 	public static onAnimationMixSetSignal: MiniSignal = new MiniSignal();
 
-	public static init ( config: ISingleAnimationDemo, animations: spine.core.Animation[] ): HTMLDivElement {
-		const container = HTMLElementCreator.createHTMLElement<HTMLDivElement>(
+	public static init ( config: ISingleAnimationDemo, animation: spine.Spine ): HTMLDivElement {
+		this.config = config;
+		this.animation = animation;
+		this.panelContainer = HTMLElementCreator.createHTMLElement<HTMLDivElement>(
 			HTMLElementType.DIV, config.buttonContainer
 		);
+		this.createTitle();
+		this.createLoopCheckBox();
+		this.createAnimationButtons();
+		return this.panelContainer;
+	}
+
+	protected static createTitle (): void {
 		const label: HTMLParagraphElement = HTMLElementCreator.createHTMLElement<HTMLParagraphElement>(
-			HTMLElementType.P, config.title
+			HTMLElementType.P, this.config.title
 		);
-		container.appendChild( label );
+		this.panelContainer.appendChild( label );
+	}
 
-		const loopCheckBoxLabel: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>( HTMLElementType.LABEL, config.loopCheckbox.label );
-		const loopCheckBox: HTMLInputElement = HTMLElementCreator.createHTMLElement<HTMLInputElement>( HTMLElementType.INPUT, config.loopCheckbox.input );
-		container.appendChild( loopCheckBox );
-		container.appendChild( loopCheckBoxLabel );
-		container.appendChild( document.createElement( HTMLElementType.BR ) );
+	protected static createLoopCheckBox (): void {
+		this.loopCheckBoxInput = HTMLElementCreator.createHTMLElement<HTMLInputElement>(
+			HTMLElementType.INPUT, this.config.loopCheckbox.input
+		);
+		this.panelContainer.appendChild( this.loopCheckBoxInput );
 
-		animations.forEach( ( animation ) => {
-			const animationButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, config.animationButton );
+		const loopCheckBoxLabel: HTMLLabelElement = HTMLElementCreator.createHTMLElement<HTMLLabelElement>(
+			HTMLElementType.LABEL, this.config.loopCheckbox.label
+		);
+		this.panelContainer.appendChild( loopCheckBoxLabel );
+
+		this.panelContainer.appendChild( document.createElement( HTMLElementType.BR ) );
+	}
+
+	protected static createAnimationButtons (): void {
+		this.animation.spineData.animations.forEach( ( animation ) => {
+			const animationButton: HTMLButtonElement = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.BUTTON, this.config.animationButton );
 			animationButton.id = animation.name + '_Btn';
 			animationButton.textContent = animation.name;
 			animationButton.onclick = () => {
 				if ( this.spineDataModel.waitInputData.isWaiting ) {
 					this.onAnimationMixSetSignal.dispatch( animation.name );
 				} else {
-					this.onSingleAnimationPlaySignal.dispatch( animation.name, loopCheckBox.checked );
+					this.onSingleAnimationPlaySignal.dispatch( animation.name, this.loopCheckBoxInput.checked );
 				}
 			};
-			container.appendChild( animationButton );
-			container.appendChild( document.createElement( HTMLElementType.BR ) );
+			this.panelContainer.appendChild( animationButton );
+			this.panelContainer.appendChild( document.createElement( HTMLElementType.BR ) );
 		} );
-		return container;
 	}
 }

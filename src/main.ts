@@ -30,6 +30,7 @@ export class GmaeApplication {
 	protected animationMixer: HTMLDivElement;
 
 	protected isDrag: boolean = false;
+	protected draggable: boolean = false;
 
 	constructor () {
 		this.appConfig = new MainConfig();
@@ -49,6 +50,7 @@ export class GmaeApplication {
 	protected addListeners (): void {
 		UploadPage.onCompleteSignal.add( this.onUploadComplete, this );
 		SpineSettingsPanel.onPixiColorUpdateSignal.add( this.onPixiColorUpdate, this );
+		SpineSettingsPanel.onAnimationDraggableChangeSignal.add( this.onAnimationDraggableChange, this );
 		SingleAnimationDemo.onSingleAnimationPlaySignal.add( this.onSingleAnimationPlay, this );
 		SingleAnimationDemo.onAnimationMixSetSignal.add( this.onAnimationMixSet, this );
 	}
@@ -63,7 +65,6 @@ export class GmaeApplication {
 
 	protected setupAnimation ( data: { res: IResourceDictionary, assetName: string } ): void {
 		this.pixi = new Application( this.appConfig );
-		this.pixi.view.style.cursor = 'grab';
 
 		const backgroundContainer = new Container();
 		this.pixi.stage.addChild( backgroundContainer );
@@ -83,12 +84,12 @@ export class GmaeApplication {
 	protected setDragAnimation (): void {
 		let dragStart: IPoint = { x: 0, y: 0 };
 		this.pixi.view.onpointerdown = ( event ) => {
-			this.isDrag = true;
+			this.setPixiCursorStyle( this.draggable ? 'grabbing' : 'default' );
+			this.isDrag = this.draggable;
 			dragStart = { x: event.clientX, y: event.clientY };
 		};
 		this.pixi.view.onpointermove = ( event ) => {
 			if ( this.isDrag ) {
-				this.pixi.view.style.cursor = 'grabbing';
 				const offsetX: number = event.clientX - dragStart.x;
 				const offsetY: number = event.clientY - dragStart.y;
 				this.animation.position.set( this.animation.position.x + offsetX, this.animation.position.y + offsetY );
@@ -96,11 +97,11 @@ export class GmaeApplication {
 			}
 		};
 		this.pixi.view.onpointerup = () => {
-			this.pixi.view.style.cursor = 'grab';
+			this.setPixiCursorStyle( this.draggable ? 'grab' : 'default' );
 			this.isDrag = false;
 		};
 		this.pixi.view.onpointerout = () => {
-			this.pixi.view.style.cursor = 'grab';
+			this.setPixiCursorStyle( this.draggable ? 'grab' : 'default' );
 			this.isDrag = false;
 		};
 	}
@@ -112,6 +113,11 @@ export class GmaeApplication {
 		} else {
 			this.pixi.renderer.backgroundColor = +colorOrUrl.replace( '#', '0x' );
 		}
+	}
+
+	protected onAnimationDraggableChange ( draggable: boolean ): void {
+		this.draggable = draggable;
+		this.setPixiCursorStyle( this.draggable ? 'grab' : 'default' );
 	}
 
 	protected onSingleAnimationPlay ( animationName: string, isLoop?: boolean ): void {
@@ -134,13 +140,17 @@ export class GmaeApplication {
 	}
 
 	protected createSingleAnimationDemo (): void {
-		this.singleAnimationDemo = SingleAnimationDemo.init( this.spineConfig.singleAnimationDemo, this.animation.spineData.animations );
+		this.singleAnimationDemo = SingleAnimationDemo.init( this.spineConfig.singleAnimationDemo, this.animation );
 		this.mainContainer.appendChild( this.singleAnimationDemo );
 	}
 
 	protected createAnimationMixer (): void {
 		this.animationMixer = AnimationMixer.init( this.spineConfig.animationMixer, this.animation );
 		this.mainContainer.appendChild( this.animationMixer );
+	}
+
+	protected setPixiCursorStyle ( style: string ): void {
+		this.pixi.view.style.cursor = style;
 	}
 
 }

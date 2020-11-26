@@ -11,12 +11,9 @@ export class AnimationMixer {
 
 	protected static config: IAnimationMixer;
 
-	protected static container: HTMLDivElement;
+	protected static panelContainer: HTMLDivElement;
 
 	protected static addButton: HTMLButtonElement;
-
-	protected static nextGroupTextColor: string;
-	protected static nextGroupBackgroundColor: string;
 
 	protected static mixGroup: TSMap<string, Array<ITrackGroup>>;
 	protected static colorGroup: TSMap<string, string>;
@@ -26,12 +23,18 @@ export class AnimationMixer {
 	public static init ( config: IAnimationMixer, animation: spine.Spine ): HTMLDivElement {
 		this.config = config;
 		this.animation = animation;
-		this.container = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config.container );
+		this.panelContainer = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config.container );
 		this.mixGroup = new TSMap();
 		this.colorGroup = new TSMap();
+		this.createTitle( config.title );
 		this.createAddMixGroupButton();
 		this.createMixGroup();
-		return this.container;
+		return this.panelContainer;
+	}
+
+	protected static createTitle ( config: IStyle ): void {
+		const title = HTMLElementCreator.createHTMLElement<HTMLButtonElement>( HTMLElementType.P, config );
+		this.panelContainer.appendChild( title );
 	}
 
 	protected static createAddMixGroupButton (): void {
@@ -39,21 +42,24 @@ export class AnimationMixer {
 		this.addButton.onclick = () => {
 			this.createMixGroup();
 		}
-		this.container.appendChild( this.addButton );
+		this.panelContainer.appendChild( this.addButton );
 	}
 
 	protected static createMixGroup (): void {
 		const config = this.config.mixGroup;
-		this.container.removeChild( this.addButton );
+		this.panelContainer.removeChild( this.addButton );
 
 		const group: HTMLDivElement = HTMLElementCreator.createHTMLElement<HTMLDivElement>( HTMLElementType.DIV, config.container );
 		group.id = config.container.id + this.mixGroup.size();
-		this.container.appendChild( group );
+		this.panelContainer.appendChild( group );
 
 		this.addGroupColor( group.id, config.track.colorList );
 
 		const track = this.createTrack( group );
 		group.appendChild( track );
+
+		const playButtonBr: HTMLBRElement = HTMLElementCreator.createHTMLElement( HTMLElementType.BR );
+		group.appendChild( playButtonBr );
 
 		const playButton = this.createPlayButton( group );
 		group.appendChild( playButton );
@@ -61,20 +67,27 @@ export class AnimationMixer {
 		const addTrackButton = this.createAddTrackButton( group );
 		group.appendChild( addTrackButton );
 
-		const hiven: HTMLHRElement = document.createElement( HTMLElementType.HR );
+		const hiven: HTMLHRElement = HTMLElementCreator.createHTMLElement( HTMLElementType.HR );
 		group.appendChild( hiven );
 
+		const addButtonBr: HTMLBRElement = HTMLElementCreator.createHTMLElement( HTMLElementType.BR );
+		group.appendChild( addButtonBr );
+
 		addTrackButton.onclick = () => {
+			group.removeChild( playButtonBr );
 			group.removeChild( playButton );
 			group.removeChild( addTrackButton );
 			group.removeChild( hiven );
+			group.removeChild( addButtonBr );
 
 			const track = this.createTrack( group );
 			group.appendChild( track );
 
+			group.appendChild( playButtonBr );
 			group.appendChild( playButton );
 			group.appendChild( addTrackButton );
 			group.appendChild( hiven );
+			group.appendChild( addButtonBr );
 			this.mixGroup.get( group.id ).push( {
 				firstAnimation: undefined, lastAnimation: undefined, mixinTime: 0
 			} );
@@ -82,7 +95,7 @@ export class AnimationMixer {
 		this.mixGroup.set( group.id, [ {
 			firstAnimation: undefined, lastAnimation: undefined, mixinTime: 0
 		} ] );
-		this.container.appendChild( this.addButton );
+		this.panelContainer.appendChild( this.addButton );
 	}
 
 	protected static addGroupColor ( groupId: string, colorList: Array<string> ): void {
@@ -129,7 +142,7 @@ export class AnimationMixer {
 
 		button.onclick = () => {
 			if ( !this.spineDataModel.waitInputData.isWaiting ) {
-				button.textContent = 'Waiting...';
+				button.textContent = '( Choose the animation from leftside )';
 				this.spineDataModel.waitInputData.isWaiting = true;
 				this.spineDataModel.waitInputData.targetId = button.id;
 				this.spineDataModel.waitInputData.groupId = groupId;
@@ -160,7 +173,7 @@ export class AnimationMixer {
 
 		button.onclick = () => {
 			if ( !this.spineDataModel.waitInputData.isWaiting ) {
-				button.textContent = 'Waiting...';
+				button.textContent = '( Choose the animation from leftside )';
 				this.spineDataModel.waitInputData.isWaiting = true;
 				this.spineDataModel.waitInputData.targetId = button.id;
 				this.spineDataModel.waitInputData.groupId = groupId;

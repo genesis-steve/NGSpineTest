@@ -35,6 +35,9 @@ export class HTMLElementCreator {
 		if ( config.fontWeight ) {
 			element.style.fontWeight = config.fontWeight;
 		}
+		if ( config.lineHeight ) {
+			element.style.lineHeight = config.lineHeight.toString();
+		}
 		if ( config.margin ) {
 			element.style.margin = config.margin;
 		}
@@ -111,6 +114,7 @@ export interface IStyle {
 	height?: number;
 	fontSize?: number;
 	fontWeight?: string;
+	lineHeight?: number;
 	color?: string;
 	background?: string;
 	textAlign?: string;
